@@ -1,0 +1,105 @@
+{
+  "nav": {
+    "home": "Home",
+    "leaderboard": "Leaderboard",
+    "login": "Login",
+    "logout": "Logout",
+    "admin": "Admin",
+    "myBadges": "My Badges"
+  },
+  "home": {
+    "title": "Service Pulse",
+    "subtitle": "Real-time public service experience tracker",
+    "searchPlaceholder": "Search constituency...",
+    "selectConstituency": "Select your constituency",
+    "viewServices": "View Services",
+    "recentReports": "Recent Reports",
+    "totalReports": "Total Reports",
+    "avgRating": "Avg Rating",
+    "avgWaitTime": "Avg Wait Time",
+    "minutes": "min"
+  },
+  "service": {
+    "status": {
+      "busy": "Busy",
+      "normal": "Normal",
+      "quiet": "Quiet"
+    },
+    "report": "Report Experience",
+    "avgWait": "Avg Wait",
+    "avgRating": "Avg Rating",
+    "reports": "Reports",
+    "type": {
+      "hospital": "Hospital",
+      "government_office": "Government Office",
+      "transport": "Transport",
+      "education": "Education",
+      "utility": "Utility",
+      "police": "Police",
+      "bank": "Bank",
+      "other": "Other"
+    }
+  },
+  "report": {
+    "title": "Submit Report",
+    "serviceTime": "How long did service take? (minutes)",
+    "rating": "Rate the service",
+    "comment": "Add a comment (optional)",
+    "commentPlaceholder": "Share your experience...",
+    "submit": "Submit Report",
+    "submitting": "Submitting...",
+    "success": "Report submitted! Thank you!",
+    "error": "Something went wrong. Please try again.",
+    "anonymous": "Submit anonymously"
+  },
+  "leaderboard": {
+    "title": "Service Leaderboard",
+    "fastest": "Fastest Services",
+    "slowest": "Slowest Services",
+    "best": "Best Rated",
+    "worst": "Worst Rated",
+    "rank": "Rank",
+    "service": "Service",
+    "avgTime": "Avg Time (min)",
+    "rating": "Rating"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "constituencies": "Constituencies",
+    "services": "Public Services",
+    "reports": "Reports",
+    "addConstituency": "Add Constituency",
+    "addService": "Add Service",
+    "edit": "Edit",
+    "delete": "Delete",
+    "hide": "Hide",
+    "approve": "Approve",
+    "name": "Name",
+    "type": "Type",
+    "location": "Location",
+    "description": "Description",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirmDelete": "Are you sure you want to delete this?"
+  },
+  "badges": {
+    "title": "Your Badges",
+    "earned": "Earned",
+    "notEarned": "Not earned yet",
+    "firstReport": "First Report",
+    "reporter5": "5 Reports",
+    "reporter10": "10 Reports",
+    "slowBadge": "Slow Spotter",
+    "topRater": "Top Rater"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "email": "Email",
+    "password": "Password",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "haveAccount": "Already have an account?",
+    "firstName": "First Name",
+    "lastName": "Last Name"
+  }
+}
