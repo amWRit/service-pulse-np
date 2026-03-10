@@ -172,7 +172,7 @@ async function main() {
   const badges = await Promise.all([
     prisma.badge.upsert({
       where: { id: "badge-first" },
-      update: {},
+      update: { conditionNp: "१ रिपोर्ट पेश गर्नुहोस्" },
       create: {
         id: "badge-first",
         name: "First Report",
@@ -180,11 +180,12 @@ async function main() {
         description: "Submitted your first report",
         icon: "🏅",
         condition: "Submit 1 report",
+        conditionNp: "१ रिपोर्ट पेश गर्नुहोस्",
       },
     }),
     prisma.badge.upsert({
       where: { id: "badge-5" },
-      update: {},
+      update: { conditionNp: "५ रिपोर्ट पेश गर्नुहोस्" },
       create: {
         id: "badge-5",
         name: "5 Reports",
@@ -192,11 +193,12 @@ async function main() {
         description: "Submitted 5 reports",
         icon: "🥈",
         condition: "Submit 5 reports",
+        conditionNp: "५ रिपोर्ट पेश गर्नुहोस्",
       },
     }),
     prisma.badge.upsert({
       where: { id: "badge-10" },
-      update: {},
+      update: { conditionNp: "१० रिपोर्ट पेश गर्नुहोस्" },
       create: {
         id: "badge-10",
         name: "10 Reports",
@@ -204,11 +206,12 @@ async function main() {
         description: "Submitted 10 reports",
         icon: "🥇",
         condition: "Submit 10 reports",
+        conditionNp: "१० रिपोर्ट पेश गर्नुहोस्",
       },
     }),
     prisma.badge.upsert({
       where: { id: "badge-25" },
-      update: {},
+      update: { conditionNp: "२५ रिपोर्ट पेश गर्नुहोस्" },
       create: {
         id: "badge-25",
         name: "25 Reports",
@@ -216,11 +219,12 @@ async function main() {
         description: "Submitted 25 reports",
         icon: "🏆",
         condition: "Submit 25 reports",
+        conditionNp: "२५ रिपोर्ट पेश गर्नुहोस्",
       },
     }),
     prisma.badge.upsert({
       where: { id: "badge-slow" },
-      update: {},
+      update: { conditionNp: "६०+ मिनेट प्रतीक्षा भएका ३ सेवाहरू रिपोर्ट गर्नुहोस्" },
       create: {
         id: "badge-slow",
         name: "Slow Spotter",
@@ -228,6 +232,7 @@ async function main() {
         description: "Reported 3+ services taking over 60 minutes",
         icon: "🐢",
         condition: "Report 3 services with > 60 min wait time",
+        conditionNp: "६०+ मिनेट प्रतीक्षा भएका ३ सेवाहरू रिपोर्ट गर्नुहोस्",
       },
     }),
   ]);

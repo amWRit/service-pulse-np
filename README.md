@@ -4,6 +4,18 @@ Real-time public service experience tracker for Nepal.
 
 ---
 
+## ✨ Features
+
+- Track and share your experiences with public services across Nepal
+- Earn badges for reporting and rating services
+- View leaderboards of top contributors
+- Browse services and reports by constituency, district, and province
+- Switch between English and Nepali languages
+- Admin dashboard for managing services, reports, and users
+- Mobile-friendly, fast, and easy to use
+
+---
+
 ## 🚀 Quick Start
 
 ### 1. Install
@@ -36,12 +48,6 @@ npm run dev
 
 ---
 
-## 🔑 Default Accounts (after seeding)
-
-| Role    | Email                   | Password   |
-|---------|-------------------------|------------|
-| Admin   | admin@servicepulse.np   | admin123   |
-| Citizen | ram@example.com         | citizen123 |
 
 ---
 

@@ -149,8 +149,9 @@ model Badge {
   nameNp      String
   description String
   icon        String
-  condition   String
-  userBadges  UserBadge[]
+  condition    String
+  conditionNp  String      @default("")
+  userBadges   UserBadge[]
 }
 
 model UserBadge {

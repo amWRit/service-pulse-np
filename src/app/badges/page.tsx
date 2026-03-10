@@ -12,6 +12,7 @@ interface Badge {
   description: string;
   icon: string;
   condition: string;
+  conditionNp: string;
 }
 
 interface BadgesData {
@@ -50,7 +51,7 @@ export default function BadgesPage() {
     return (
       <div className="max-w-md mx-auto px-4 py-16 text-center">
         <div className="text-5xl mb-4">🔒</div>
-        <h2 className="text-xl font-bold text-gray-800 mb-2">Login to see your badges</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-2">{t("badges.loginToView" as never)}</h2>
         <Link href="/login" className="inline-block mt-4 bg-orange-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-orange-600 transition-colors">
           {t("nav.login")}
         </Link>
@@ -68,7 +69,7 @@ export default function BadgesPage() {
         <div className="text-5xl mb-3">🏅</div>
         <h1 className="text-3xl font-extrabold text-gray-900">{t("badges.title")}</h1>
         <p className="text-gray-500 mt-1">
-          {earned.length}/{data?.all.length ?? 0} earned
+          {earned.length}/{data?.all.length ?? 0} {t("badges.earned")}
         </p>
       </div>
 
@@ -99,7 +100,7 @@ export default function BadgesPage() {
                 <p className="font-bold text-gray-500 text-sm">
                   {locale === "np" ? badge.nameNp : badge.name}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">{badge.condition}</p>
+                <p className="text-xs text-gray-400 mt-1">{locale === "np" && badge.conditionNp ? badge.conditionNp : badge.condition}</p>
               </div>
             ))}
           </div>
