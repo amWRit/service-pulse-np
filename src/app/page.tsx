@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
 import Link from "next/link";
 import StarRating from "@/components/StarRating";
+import { useSession } from "next-auth/react";
+import ReportModal from "@/components/ReportModal";
+import { Plus } from "lucide-react";
 
 interface ServiceEntry {
   id: string;
@@ -47,10 +50,12 @@ const TAB_SHORT: Record<string, string> = {
 
 export default function HomePage() {
   const { t, locale } = useI18n();
+  const { data: session } = useSession();
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [active, setActive] = useState<(typeof TABS)[number]>("fastest");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats>({ constituencies: 0, services: 0, reports: 0 });
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/leaderboard")
@@ -163,6 +168,20 @@ export default function HomePage() {
           ))}
         </div>
       )}
+
+      {/* Floating report button */}
+      {session && (
+        <button
+          onClick={() => setModalOpen(true)}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold px-5 py-3.5 rounded-full shadow-lg transition-all"
+        >
+          <Plus className="w-5 h-5" />
+          <span className="text-sm">Report</span>
+        </button>
+      )}
+
+      {/* Report modal */}
+      {modalOpen && <ReportModal onClose={() => setModalOpen(false)} />}
     </div>
   );
 }
