@@ -6,7 +6,8 @@ import Link from "next/link";
 import StarRating from "@/components/StarRating";
 import { useSession } from "next-auth/react";
 import ReportModal from "@/components/ReportModal";
-import { Plus } from "lucide-react";
+import { Plus, Zap, Turtle, ThumbsUp, ThumbsDown, Snail } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface ServiceEntry {
   id: string;
@@ -34,18 +35,11 @@ interface Stats {
 
 const TABS = ["fastest", "slowest", "best", "worst"] as const;
 
-const TAB_EMOJI: Record<string, string> = {
-  fastest: "⚡",
-  slowest: "🐢",
-  best: "🏆",
-  worst: "😤",
-};
-
-const TAB_SHORT: Record<string, string> = {
-  fastest: "Fastest",
-  slowest: "Slowest",
-  best: "Best",
-  worst: "Worst",
+const TAB_ICON: Record<string, LucideIcon> = {
+  fastest: Zap,
+  slowest: Snail,
+  best: ThumbsUp,
+  worst: ThumbsDown,
 };
 
 export default function HomePage() {
@@ -89,7 +83,7 @@ export default function HomePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-1">
         {TABS.map((tab) => (
           <button
             key={tab}
@@ -100,12 +94,17 @@ export default function HomePage() {
                 : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
             }`}
           >
-            <span>{TAB_EMOJI[tab]}</span>
-            <span className="sm:hidden">{TAB_SHORT[tab]}</span>
+            {(() => { const Icon = TAB_ICON[tab]; return <Icon className="w-4 h-4 flex-shrink-0" />; })()}
             <span className="hidden sm:inline">{t(`leaderboard.${tab}`)}</span>
           </button>
         ))}
       </div>
+
+      {/* Active tab label — small screens only */}
+      <p className="sm:hidden text-center text-xs font-semibold text-orange-500 mb-5 mt-2">
+        {t(`leaderboard.${active}`)}
+      </p>
+      <div className="hidden sm:block mb-5" />
 
       {/* Entries */}
       {loading ? (
