@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, EyeOff, Trash2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import type { Report } from "./types";
 
@@ -32,22 +33,24 @@ export default function ReportList({ reports, onModerate, onDelete }: ReportList
                 {r.isHidden && " · [Hidden]"}
               </p>
             </div>
-            <div className="flex gap-2 flex-shrink-0">
+            <div className="flex gap-1 flex-shrink-0">
               <button
                 onClick={() => onModerate(r.id, !r.isHidden)}
-                className={`text-xs font-medium px-2 py-1 rounded border ${
+                title={r.isHidden ? t("admin.approve") : t("admin.hide")}
+                className={`p-1.5 rounded-lg transition-colors ${
                   r.isHidden
-                    ? "text-green-600 border-green-300 hover:bg-green-50"
-                    : "text-yellow-600 border-yellow-300 hover:bg-yellow-50"
+                    ? "text-green-500 hover:text-green-600 hover:bg-green-50"
+                    : "text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50"
                 }`}
               >
-                {r.isHidden ? t("admin.approve") : t("admin.hide")}
+                {r.isHidden ? <Eye size={15} /> : <EyeOff size={15} />}
               </button>
               <button
                 onClick={() => onDelete(r.id)}
-                className="text-xs font-medium px-2 py-1 rounded border text-red-600 border-red-300 hover:bg-red-50"
+                title={t("admin.delete")}
+                className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
               >
-                {t("admin.delete")}
+                <Trash2 size={15} />
               </button>
             </div>
           </div>

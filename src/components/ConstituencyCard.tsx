@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
+import { gDriveUrl } from "@/lib/utils";
 
 interface ConstituencyCardProps {
   id: string;
@@ -23,10 +25,15 @@ export default function ConstituencyCard({
       href={`/constituencies/${id}`}
       className="block bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-lg hover:border-orange-300 transition-all group"
     >
-      <div
-        className="h-32 bg-gradient-to-br from-orange-400 to-red-500 bg-cover bg-center relative"
-        style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : {}}
-      >
+      <div className="h-32 bg-gradient-to-br from-orange-400 to-red-500 relative overflow-hidden">
+        <Image
+          src={imageUrl ? gDriveUrl(imageUrl) : "/images/emblem.jpg"}
+          alt={name}
+          width={600}
+          height={800}
+          className="object-cover"
+          style={{ maxWidth: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
         {province && (
           <span className="absolute top-2 right-2 bg-white/90 text-gray-700 text-xs px-2 py-0.5 rounded-full font-medium">

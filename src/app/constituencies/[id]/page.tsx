@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import { useI18n } from "@/lib/i18n";
 import ServiceCard from "@/components/ServiceCard";
 import Link from "next/link";
+import { gDriveUrl } from "@/lib/utils";
 
 interface Service {
   id: string;
@@ -71,10 +73,14 @@ export default function ConstituencyPage() {
       <Link href="/" className="text-orange-600 hover:underline text-sm mb-4 inline-block">← {t("nav.home")}</Link>
 
       {/* Header */}
-      <div
-        className="rounded-2xl overflow-hidden mb-6 relative h-48 bg-gradient-to-br from-orange-400 to-red-500"
-        style={data.imageUrl ? { backgroundImage: `url(${data.imageUrl})`, backgroundSize: "cover" } : {}}
-      >
+      <div className="rounded-2xl overflow-hidden mb-6 relative h-48 bg-gradient-to-br from-orange-400 to-red-500">
+        <Image
+          src={data.imageUrl ? gDriveUrl(data.imageUrl) : "/images/emblem.jpg"}
+          alt={data.name}
+          fill
+          className="object-cover"
+          style={{ objectFit: "cover" }}
+        />
         <div className="absolute inset-0 bg-black/40 flex items-end p-6">
           <div>
             {data.province && (

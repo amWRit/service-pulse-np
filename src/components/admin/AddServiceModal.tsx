@@ -35,13 +35,15 @@ const EMPTY_FORM: ServiceFormData = {
 
 interface AddServiceModalProps {
   constituencies: Constituency[];
+  initialData?: ServiceFormData;
   onSubmit: (form: ServiceFormData) => Promise<void>;
   onClose: () => void;
 }
 
-export default function AddServiceModal({ constituencies, onSubmit, onClose }: AddServiceModalProps) {
+export default function AddServiceModal({ constituencies, initialData, onSubmit, onClose }: AddServiceModalProps) {
   const { t } = useI18n();
-  const [form, setForm] = useState<ServiceFormData>(EMPTY_FORM);
+  const [form, setForm] = useState<ServiceFormData>(initialData ?? EMPTY_FORM);
+  const isEditing = !!initialData;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +54,9 @@ export default function AddServiceModal({ constituencies, onSubmit, onClose }: A
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold mb-4">{t("admin.addService")}</h2>
+        <h2 className="text-lg font-bold mb-4">
+          {isEditing ? t("admin.editService") : t("admin.addService")}
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           {TEXT_FIELDS.map((field) => (
             <div key={field.key}>

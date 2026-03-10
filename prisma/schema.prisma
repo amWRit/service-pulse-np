@@ -77,6 +77,24 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Province {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  nameNp    String
+  districts District[]
+}
+
+model District {
+  id             String         @id @default(cuid())
+  name           String
+  nameNp         String
+  provinceId     String
+  province       Province       @relation(fields: [provinceId], references: [id])
+  constituencies Constituency[]
+
+  @@unique([name, provinceId])
+}
+
 model Constituency {
   id          String          @id @default(cuid())
   name        String
@@ -84,6 +102,8 @@ model Constituency {
   imageUrl    String?
   description String?
   province    String?
+  districtId  String?
+  district    District?       @relation(fields: [districtId], references: [id])
   services    PublicService[]
   reports     Report[]
   createdAt   DateTime        @default(now())

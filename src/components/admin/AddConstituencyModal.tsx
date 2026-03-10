@@ -12,22 +12,29 @@ const EMPTY_FORM: ConstituencyFormData = {
   description: "",
 };
 
-const FIELDS: { label: string; key: keyof ConstituencyFormData }[] = [
+const FIELDS: { label: string; key: keyof ConstituencyFormData; placeholder?: string; hint?: string }[] = [
   { label: "Name (English)", key: "name" },
   { label: "Name (Nepali)", key: "nameNp" },
   { label: "Province", key: "province" },
-  { label: "Image URL", key: "imageUrl" },
+  {
+    label: "Google Drive Image URL",
+    key: "imageUrl",
+    placeholder: "https://drive.google.com/file/d/FILE_ID/view",
+    hint: "Share the file publicly in Google Drive, then paste the link here.",
+  },
   { label: "Description", key: "description" },
 ];
 
 interface AddConstituencyModalProps {
+  initialData?: ConstituencyFormData;
   onSubmit: (form: ConstituencyFormData) => Promise<void>;
   onClose: () => void;
 }
 
-export default function AddConstituencyModal({ onSubmit, onClose }: AddConstituencyModalProps) {
+export default function AddConstituencyModal({ initialData, onSubmit, onClose }: AddConstituencyModalProps) {
   const { t } = useI18n();
-  const [form, setForm] = useState<ConstituencyFormData>(EMPTY_FORM);
+  const [form, setForm] = useState<ConstituencyFormData>(initialData ?? EMPTY_FORM);
+  const isEditing = !!initialData;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +45,9 @@ export default function AddConstituencyModal({ onSubmit, onClose }: AddConstitue
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-bold mb-4">{t("admin.addConstituency")}</h2>
+        <h2 className="text-lg font-bold mb-4">
+          {isEditing ? t("admin.editConstituency") : t("admin.addConstituency")}
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           {FIELDS.map((field) => (
             <div key={field.key}>
@@ -46,8 +55,12 @@ export default function AddConstituencyModal({ onSubmit, onClose }: AddConstitue
               <input
                 value={form[field.key]}
                 onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                placeholder={field.placeholder}
                 className="mt-1 w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
               />
+              {field.hint && (
+                <p className="mt-1 text-xs text-gray-400">{field.hint}</p>
+              )}
             </div>
           ))}
           <div className="flex gap-2 pt-2">

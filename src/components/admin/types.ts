@@ -3,6 +3,8 @@ export interface Constituency {
   name: string;
   nameNp: string;
   province?: string;
+  imageUrl?: string;
+  description?: string;
   _count?: { services: number; reports: number };
 }
 
@@ -12,6 +14,8 @@ export interface Service {
   nameNp: string;
   type: string;
   location?: string;
+  description?: string;
+  descriptionNp?: string;
   constituencyId: string;
   constituency?: { name: string };
   reportCount?: number;

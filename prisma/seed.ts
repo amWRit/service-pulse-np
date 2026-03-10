@@ -3,8 +3,142 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+// ── Province + District data ─────────────────────────────────────────────────
+const PROVINCES: { id: string; name: string; nameNp: string; districts: { id: string; name: string; nameNp: string }[] }[] = [
+  {
+    id: "prov-koshi", name: "Koshi", nameNp: "कोशी",
+    districts: [
+      { id: "dist-taplejung",      name: "Taplejung",     nameNp: "ताप्लेजुङ" },
+      { id: "dist-panchthar",      name: "Panchthar",     nameNp: "पाँचथर" },
+      { id: "dist-ilam",           name: "Ilam",          nameNp: "इलाम" },
+      { id: "dist-jhapa",          name: "Jhapa",         nameNp: "झापा" },
+      { id: "dist-sankhuwasabha",  name: "Sankhuwasabha", nameNp: "संखुवासभा" },
+      { id: "dist-tehrathum",      name: "Tehrathum",     nameNp: "तेह्रथुम" },
+      { id: "dist-bhojpur",        name: "Bhojpur",       nameNp: "भोजपुर" },
+      { id: "dist-dhankuta",       name: "Dhankuta",      nameNp: "धनकुटा" },
+      { id: "dist-morang",         name: "Morang",        nameNp: "मोरङ" },
+      { id: "dist-sunsari",        name: "Sunsari",       nameNp: "सुनसरी" },
+      { id: "dist-solukhumbu",     name: "Solukhumbu",    nameNp: "सोलुखुम्बु" },
+      { id: "dist-khotang",        name: "Khotang",       nameNp: "खोटाङ" },
+      { id: "dist-okhaldhunga",    name: "Okhaldhunga",   nameNp: "ओखलढुङ्गा" },
+      { id: "dist-udayapur",       name: "Udayapur",      nameNp: "उदयपुर" },
+    ],
+  },
+  {
+    id: "prov-madhesh", name: "Madhesh", nameNp: "मधेश",
+    districts: [
+      { id: "dist-saptari",    name: "Saptari",    nameNp: "सप्तरी" },
+      { id: "dist-siraha",     name: "Siraha",     nameNp: "सिराहा" },
+      { id: "dist-dhanusha",   name: "Dhanusha",   nameNp: "धनुषा" },
+      { id: "dist-mahottari",  name: "Mahottari",  nameNp: "महोत्तरी" },
+      { id: "dist-sarlahi",    name: "Sarlahi",    nameNp: "सर्लाही" },
+      { id: "dist-rautahat",   name: "Rautahat",   nameNp: "रौतहट" },
+      { id: "dist-bara",       name: "Bara",       nameNp: "बारा" },
+      { id: "dist-parsa",      name: "Parsa",      nameNp: "पर्सा" },
+    ],
+  },
+  {
+    id: "prov-bagmati", name: "Bagmati", nameNp: "बागमती",
+    districts: [
+      { id: "dist-dolakha",       name: "Dolakha",       nameNp: "दोलखा" },
+      { id: "dist-ramechhap",     name: "Ramechhap",     nameNp: "रामेछाप" },
+      { id: "dist-sindhuli",      name: "Sindhuli",      nameNp: "सिन्धुली" },
+      { id: "dist-rasuwa",        name: "Rasuwa",        nameNp: "रसुवा" },
+      { id: "dist-dhading",       name: "Dhading",       nameNp: "धादिङ" },
+      { id: "dist-nuwakot",       name: "Nuwakot",       nameNp: "नुवाकोट" },
+      { id: "dist-kathmandu",     name: "Kathmandu",     nameNp: "काठमाडौँ" },
+      { id: "dist-bhaktapur",     name: "Bhaktapur",     nameNp: "भक्तपुर" },
+      { id: "dist-lalitpur",      name: "Lalitpur",      nameNp: "ललितपुर" },
+      { id: "dist-kavrepalanchok",name: "Kavrepalanchok",nameNp: "काभ्रेपलाञ्चोक" },
+      { id: "dist-sindhupalchok", name: "Sindhupalchok", nameNp: "सिन्धुपाल्चोक" },
+      { id: "dist-makwanpur",     name: "Makwanpur",     nameNp: "मकवानपुर" },
+      { id: "dist-chitwan",       name: "Chitwan",       nameNp: "चितवन" },
+    ],
+  },
+  {
+    id: "prov-gandaki", name: "Gandaki", nameNp: "गण्डकी",
+    districts: [
+      { id: "dist-gorkha",     name: "Gorkha",     nameNp: "गोर्खा" },
+      { id: "dist-manang",     name: "Manang",     nameNp: "मनाङ" },
+      { id: "dist-lamjung",    name: "Lamjung",    nameNp: "लमजुङ" },
+      { id: "dist-kaski",      name: "Kaski",      nameNp: "कास्की" },
+      { id: "dist-tanahun",    name: "Tanahun",    nameNp: "तनहुँ" },
+      { id: "dist-syangja",    name: "Syangja",    nameNp: "स्याङजा" },
+      { id: "dist-nawalpur",   name: "Nawalpur",   nameNp: "नवलपुर" },
+      { id: "dist-mustang",    name: "Mustang",    nameNp: "मुस्ताङ" },
+      { id: "dist-myagdi",     name: "Myagdi",     nameNp: "म्याग्दी" },
+      { id: "dist-baglung",    name: "Baglung",    nameNp: "बाग्लुङ" },
+      { id: "dist-parbat",     name: "Parbat",     nameNp: "पर्वत" },
+    ],
+  },
+  {
+    id: "prov-lumbini", name: "Lumbini", nameNp: "लुम्बिनी",
+    districts: [
+      { id: "dist-gulmi",          name: "Gulmi",                    nameNp: "गुल्मी" },
+      { id: "dist-palpa",          name: "Palpa",                    nameNp: "पाल्पा" },
+      { id: "dist-arghakhanchi",   name: "Arghakhanchi",             nameNp: "अर्घाखाँची" },
+      { id: "dist-nawalparasi-w",  name: "Nawalparasi (West)",       nameNp: "नवलपरासी (पश्चिम)" },
+      { id: "dist-rupandehi",      name: "Rupandehi",                nameNp: "रुपन्देही" },
+      { id: "dist-kapilvastu",     name: "Kapilvastu",               nameNp: "कपिलवस्तु" },
+      { id: "dist-eastern-rukum",  name: "Eastern Rukum",            nameNp: "रुकुम पूर्व" },
+      { id: "dist-rolpa",          name: "Rolpa",                    nameNp: "रोल्पा" },
+      { id: "dist-pyuthan",        name: "Pyuthan",                  nameNp: "प्युठान" },
+      { id: "dist-dang",           name: "Dang",                     nameNp: "दाङ" },
+      { id: "dist-banke",          name: "Banke",                    nameNp: "बाँके" },
+      { id: "dist-bardiya",        name: "Bardiya",                  nameNp: "बर्दिया" },
+    ],
+  },
+  {
+    id: "prov-karnali", name: "Karnali", nameNp: "कर्णाली",
+    districts: [
+      { id: "dist-salyan",        name: "Salyan",        nameNp: "सल्यान" },
+      { id: "dist-dolpa",         name: "Dolpa",         nameNp: "डोल्पा" },
+      { id: "dist-mugu",          name: "Mugu",          nameNp: "मुगु" },
+      { id: "dist-jumla",         name: "Jumla",         nameNp: "जुम्ला" },
+      { id: "dist-kalikot",       name: "Kalikot",       nameNp: "कालिकोट" },
+      { id: "dist-humla",         name: "Humla",         nameNp: "हुम्ला" },
+      { id: "dist-jajarkot",      name: "Jajarkot",      nameNp: "जाजरकोट" },
+      { id: "dist-dailekh",       name: "Dailekh",       nameNp: "दैलेख" },
+      { id: "dist-surkhet",       name: "Surkhet",       nameNp: "सुर्खेत" },
+      { id: "dist-western-rukum", name: "Western Rukum", nameNp: "रुकुम पश्चिम" },
+    ],
+  },
+  {
+    id: "prov-sudurpaschim", name: "Sudurpaschim", nameNp: "सुदूरपश्चिम",
+    districts: [
+      { id: "dist-bajura",      name: "Bajura",      nameNp: "बाजुरा" },
+      { id: "dist-achham",      name: "Achham",      nameNp: "अछाम" },
+      { id: "dist-bajhang",     name: "Bajhang",     nameNp: "बझाङ" },
+      { id: "dist-doti",        name: "Doti",        nameNp: "डोटी" },
+      { id: "dist-kailali",     name: "Kailali",     nameNp: "कैलाली" },
+      { id: "dist-darchula",    name: "Darchula",    nameNp: "दार्चुला" },
+      { id: "dist-baitadi",     name: "Baitadi",     nameNp: "बैतडी" },
+      { id: "dist-dadeldhura",  name: "Dadeldhura",  nameNp: "डडेलधुरा" },
+      { id: "dist-kanchanpur",  name: "Kanchanpur",  nameNp: "कञ्चनपुर" },
+    ],
+  },
+];
+
 async function main() {
   console.log("🌱 Seeding database...");
+
+  // ── Provinces + Districts ──────────────────────────────────────────────────
+  for (const prov of PROVINCES) {
+    await prisma.province.upsert({
+      where: { id: prov.id },
+      update: { name: prov.name, nameNp: prov.nameNp },
+      create: { id: prov.id, name: prov.name, nameNp: prov.nameNp },
+    });
+    for (const dist of prov.districts) {
+      await prisma.district.upsert({
+        where: { id: dist.id },
+        update: { name: dist.name, nameNp: dist.nameNp, provinceId: prov.id },
+        create: { id: dist.id, name: dist.name, nameNp: dist.nameNp, provinceId: prov.id },
+      });
+    }
+  }
+  const totalDistricts = PROVINCES.reduce((n, p) => n + p.districts.length, 0);
+  console.log(`✅ Provinces (${PROVINCES.length}) + Districts (${totalDistricts}) created`);
 
   // Create admin user
   const adminPassword = await bcrypt.hash("admin123", 12);
@@ -103,50 +237,54 @@ async function main() {
   const constituencies = await Promise.all([
     prisma.constituency.upsert({
       where: { id: "const-kathmandu-1" },
-      update: {},
+      update: { districtId: "dist-kathmandu" },
       create: {
         id: "const-kathmandu-1",
         name: "Kathmandu-1",
         nameNp: "काठमाडौं-१",
         province: "Bagmati Province",
+        districtId: "dist-kathmandu",
         description: "Central Kathmandu constituency",
-        imageUrl: "https://images.unsplash.com/photo-1588964895597-cfccd6e2dbf9?w=400",
+        imageUrl: "https://drive.google.com/file/d/1LwqZBxuDJbXkqyCrdICft2wg74ueDld6/view?usp=drive_link",
       },
     }),
     prisma.constituency.upsert({
       where: { id: "const-lalitpur-1" },
-      update: {},
+      update: { districtId: "dist-lalitpur" },
       create: {
         id: "const-lalitpur-1",
         name: "Lalitpur-1",
         nameNp: "ललितपुर-१",
         province: "Bagmati Province",
+        districtId: "dist-lalitpur",
         description: "Lalitpur Metropolitan City constituency",
-        imageUrl: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400",
+        imageUrl: "https://drive.google.com/file/d/1FHwEj_a6JycbjEgLDkJAF2FjPd66_mVr/view?usp=drive_link",
       },
     }),
     prisma.constituency.upsert({
       where: { id: "const-pokhara-1" },
-      update: {},
+      update: { districtId: "dist-kaski" },
       create: {
         id: "const-pokhara-1",
         name: "Pokhara-1",
         nameNp: "पोखरा-१",
         province: "Gandaki Province",
+        districtId: "dist-kaski",
         description: "Pokhara Metropolitan City constituency",
-        imageUrl: "https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=400",
+        imageUrl: "https://drive.google.com/file/d/1O9udqFpiIhbpPpO38JaiRXljzgOG7-4D/view?usp=drive_link",
       },
     }),
     prisma.constituency.upsert({
       where: { id: "const-biratnagar-1" },
-      update: {},
+      update: { districtId: "dist-morang" },
       create: {
         id: "const-biratnagar-1",
         name: "Biratnagar-1",
         nameNp: "विराटनगर-१",
         province: "Koshi Province",
+        districtId: "dist-morang",
         description: "Biratnagar Metropolitan City constituency",
-        imageUrl: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400",
+        imageUrl: "https://drive.google.com/file/d/1uBuEueh3J3eH6PiL8636Pt5FHszbpwFR/view?usp=drive_link",
       },
     }),
   ]);

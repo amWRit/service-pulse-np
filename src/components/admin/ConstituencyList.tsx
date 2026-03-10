@@ -1,14 +1,16 @@
 "use client";
 
+import { Pencil, Trash2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import type { Constituency } from "./types";
 
 interface ConstituencyListProps {
   constituencies: Constituency[];
+  onEdit: (c: Constituency) => void;
   onDelete: (id: string) => void;
 }
 
-export default function ConstituencyList({ constituencies, onDelete }: ConstituencyListProps) {
+export default function ConstituencyList({ constituencies, onEdit, onDelete }: ConstituencyListProps) {
   const { t } = useI18n();
 
   return (
@@ -26,12 +28,22 @@ export default function ConstituencyList({ constituencies, onDelete }: Constitue
               {c.province} · {c._count?.services ?? 0} services · {c._count?.reports ?? 0} reports
             </p>
           </div>
-          <button
-            onClick={() => onDelete(c.id)}
-            className="text-red-500 hover:text-red-700 text-sm font-medium"
-          >
-            {t("admin.delete")}
-          </button>
+          <div className="flex gap-1">
+            <button
+              onClick={() => onEdit(c)}
+              title={t("admin.edit")}
+              className="p-1.5 rounded-lg text-orange-400 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+            >
+              <Pencil size={15} />
+            </button>
+            <button
+              onClick={() => onDelete(c.id)}
+              title={t("admin.delete")}
+              className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <Trash2 size={15} />
+            </button>
+          </div>
         </div>
       ))}
     </div>

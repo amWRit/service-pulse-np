@@ -71,6 +71,8 @@
     "reports": "Reports",
     "addConstituency": "Add Constituency",
     "addService": "Add Service",
+    "editConstituency": "Edit Constituency",
+    "editService": "Edit Service",
     "edit": "Edit",
     "delete": "Delete",
     "hide": "Hide",

@@ -1,14 +1,16 @@
 "use client";
 
+import { Pencil, Trash2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import type { Service } from "./types";
 
 interface ServiceListProps {
   services: Service[];
+  onEdit: (s: Service) => void;
   onDelete: (id: string) => void;
 }
 
-export default function ServiceList({ services, onDelete }: ServiceListProps) {
+export default function ServiceList({ services, onEdit, onDelete }: ServiceListProps) {
   const { t } = useI18n();
 
   return (
@@ -26,12 +28,22 @@ export default function ServiceList({ services, onDelete }: ServiceListProps) {
               {t(`service.type.${s.type}`)} · {s.location} · {s.constituency?.name}
             </p>
           </div>
-          <button
-            onClick={() => onDelete(s.id)}
-            className="text-red-500 hover:text-red-700 text-sm font-medium"
-          >
-            {t("admin.delete")}
-          </button>
+          <div className="flex gap-1">
+            <button
+              onClick={() => onEdit(s)}
+              title={t("admin.edit")}
+              className="p-1.5 rounded-lg text-orange-400 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+            >
+              <Pencil size={15} />
+            </button>
+            <button
+              onClick={() => onDelete(s.id)}
+              title={t("admin.delete")}
+              className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <Trash2 size={15} />
+            </button>
+          </div>
         </div>
       ))}
     </div>

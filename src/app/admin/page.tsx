@@ -12,7 +12,7 @@ import ReportList from "@/components/admin/ReportList";
 import type { Constituency, Service, Report, ConstituencyFormData, ServiceFormData } from "@/components/admin/types";
 
 type Tab = "constituencies" | "services" | "reports";
-type Modal = "addConstituency" | "addService" | null;
+type Modal = "addConstituency" | "addService" | "editConstituency" | "editService" | null;
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -24,6 +24,8 @@ export default function AdminPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<Modal>(null);
+  const [editingConstituency, setEditingConstituency] = useState<Constituency | null>(null);
+  const [editingService, setEditingService] = useState<Service | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -75,23 +77,47 @@ export default function AdminPage() {
   };
 
   const submitConstituency = async (form: ConstituencyFormData) => {
-    await fetch("/api/constituencies", {
-      method: "POST",
+    const url = editingConstituency
+      ? `/api/constituencies/${editingConstituency.id}`
+      : "/api/constituencies";
+    await fetch(url, {
+      method: editingConstituency ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
     setModal(null);
+    setEditingConstituency(null);
     loadAll();
   };
 
   const submitService = async (form: ServiceFormData) => {
-    await fetch("/api/services", {
-      method: "POST",
+    const url = editingService
+      ? `/api/services/${editingService.id}`
+      : "/api/services";
+    await fetch(url, {
+      method: editingService ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
     setModal(null);
+    setEditingService(null);
     loadAll();
+  };
+
+  const openEditConstituency = (c: Constituency) => {
+    setEditingConstituency(c);
+    setModal("editConstituency");
+  };
+
+  const openEditService = (s: Service) => {
+    setEditingService(s);
+    setModal("editService");
+  };
+
+  const closeModal = () => {
+    setModal(null);
+    setEditingConstituency(null);
+    setEditingService(null);
   };
 
   if (status === "loading" || loading) {
@@ -128,26 +154,61 @@ export default function AdminPage() {
       </div>
 
       {tab === "constituencies" && (
-        <ConstituencyList constituencies={constituencies} onDelete={deleteConstituency} />
+        <ConstituencyList
+          constituencies={constituencies}
+          onEdit={openEditConstituency}
+          onDelete={deleteConstituency}
+        />
       )}
 
       {tab === "services" && (
-        <ServiceList services={services} onDelete={deleteService} />
+        <ServiceList
+          services={services}
+          onEdit={openEditService}
+          onDelete={deleteService}
+        />
       )}
 
       {tab === "reports" && (
         <ReportList reports={reports} onModerate={moderateReport} onDelete={deleteReport} />
       )}
 
-      {modal === "addConstituency" && (
-        <AddConstituencyModal onSubmit={submitConstituency} onClose={() => setModal(null)} />
+      {(modal === "addConstituency" || modal === "editConstituency") && (
+        <AddConstituencyModal
+          initialData={
+            editingConstituency
+              ? {
+                  name: editingConstituency.name,
+                  nameNp: editingConstituency.nameNp,
+                  province: editingConstituency.province ?? "",
+                  imageUrl: editingConstituency.imageUrl ?? "",
+                  description: editingConstituency.description ?? "",
+                }
+              : undefined
+          }
+          onSubmit={submitConstituency}
+          onClose={closeModal}
+        />
       )}
 
-      {modal === "addService" && (
+      {(modal === "addService" || modal === "editService") && (
         <AddServiceModal
           constituencies={constituencies}
+          initialData={
+            editingService
+              ? {
+                  name: editingService.name,
+                  nameNp: editingService.nameNp,
+                  type: editingService.type,
+                  location: editingService.location ?? "",
+                  description: editingService.description ?? "",
+                  descriptionNp: editingService.descriptionNp ?? "",
+                  constituencyId: editingService.constituencyId,
+                }
+              : undefined
+          }
           onSubmit={submitService}
-          onClose={() => setModal(null)}
+          onClose={closeModal}
         />
       )}
     </div>
