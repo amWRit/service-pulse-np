@@ -3,14 +3,27 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
 export async function GET() {
-  const constituencies = await prisma.constituency.findMany({
-    orderBy: { name: "asc" },
-    include: {
-      _count: { select: { services: true, reports: true } },
-      district: { include: { province: { select: { id: true, name: true } } } },
-    },
+  const [constituencies, provinces] = await Promise.all([
+    prisma.constituency.findMany({
+      orderBy: { name: "asc" },
+      include: {
+        _count: { select: { services: true, reports: true } },
+        district: { include: { province: { select: { id: true, name: true, nameNp: true } } } },
+      },
+    }),
+    prisma.province.findMany({ select: { name: true, nameNp: true } }),
+  ]);
+
+  const provinceByName = new Map(provinces.map((p) => [p.name, p.nameNp]));
+
+  const data = constituencies.map((c) => {
+    const provinceNp =
+      c.district?.province?.nameNp ??
+      (c.province ? provinceByName.get(c.province) ?? provinceByName.get(c.province.replace(/ Province$/, "")) ?? null : null);
+    return { ...c, provinceNp };
   });
-  return NextResponse.json(constituencies);
+
+  return NextResponse.json(data);
 }
 
 export async function POST(req: Request) {

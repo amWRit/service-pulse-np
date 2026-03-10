@@ -9,8 +9,10 @@ interface Constituency {
   name: string;
   nameNp: string;
   province: string | null;
+  provinceNp?: string | null;
   imageUrl: string | null;
   _count: { services: number; reports: number };
+  district?: { province?: { name: string; nameNp: string } | null } | null;
 }
 
 export default function ConstituenciesPage() {
@@ -94,6 +96,7 @@ export default function ConstituenciesPage() {
               name={c.name}
               nameNp={c.nameNp}
               province={c.province}
+              provinceNp={c.provinceNp ?? null}
               imageUrl={c.imageUrl}
               serviceCount={c._count.services}
               reportCount={c._count.reports}

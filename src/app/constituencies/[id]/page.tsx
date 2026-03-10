@@ -25,8 +25,10 @@ interface Constituency {
   name: string;
   nameNp: string;
   province?: string;
+  provinceNp?: string | null;
   imageUrl?: string;
   description?: string;
+  district?: { province?: { name: string; nameNp: string } | null } | null;
   services: Service[];
 }
 
@@ -85,7 +87,9 @@ export default function ConstituencyPage() {
           <div>
             {data.province && (
               <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full mb-2 inline-block">
-                {data.province}
+                {locale === "np" && data.provinceNp
+                  ? `${data.provinceNp} प्रदेश`
+                  : data.province}
               </span>
             )}
             <h1 className="text-3xl font-extrabold text-white">

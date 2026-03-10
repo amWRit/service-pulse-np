@@ -10,13 +10,14 @@ interface ConstituencyCardProps {
   name: string;
   nameNp: string;
   province?: string | null;
+  provinceNp?: string | null;
   imageUrl?: string | null;
   serviceCount?: number;
   reportCount?: number;
 }
 
 export default function ConstituencyCard({
-  id, name, nameNp, province, imageUrl, serviceCount = 0, reportCount = 0,
+  id, name, nameNp, province, provinceNp, imageUrl, serviceCount = 0, reportCount = 0,
 }: ConstituencyCardProps) {
   const { t, locale } = useI18n();
 
@@ -37,7 +38,7 @@ export default function ConstituencyCard({
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
         {province && (
           <span className="absolute top-2 right-2 bg-white/90 text-gray-700 text-xs px-2 py-0.5 rounded-full font-medium">
-            {province}
+            {locale === "np" && provinceNp ? `${provinceNp} प्रदेश` : province}
           </span>
         )}
       </div>
@@ -47,8 +48,8 @@ export default function ConstituencyCard({
           {locale === "np" ? nameNp : name}
         </h3>
         <div className="mt-2 flex gap-3 text-sm text-gray-500">
-          <span>🏢 {serviceCount} {t("nav.services" as never) || "services"}</span>
-          <span>📋 {reportCount} {t("leaderboard.reports" as never) || "reports"}</span>
+          <span>🏢 {serviceCount} {t("nav.services" as never)}</span>
+          <span>📋 {reportCount} {t("service.reports" as never)}</span>
         </div>
         <div className="mt-3 text-sm font-semibold text-orange-600 group-hover:underline">
           {t("home.viewServices")} →
