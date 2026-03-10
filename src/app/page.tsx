@@ -78,7 +78,7 @@ export default function HomePage() {
         <span className="text-2xl sm:text-4xl">🏆</span>
         <div>
           <h2 className="text-lg sm:text-2xl font-extrabold text-gray-900 sm:text-center">{t("leaderboard.title")}</h2>
-          <p className="hidden sm:block text-sm text-gray-400 text-center">Based on real citizen reports</p>
+          <p className="hidden sm:block text-sm text-gray-400 text-center">{t("leaderboard.subtitle")}</p>
         </div>
       </div>
 

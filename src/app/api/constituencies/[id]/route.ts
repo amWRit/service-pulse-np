@@ -10,6 +10,7 @@ export async function GET(
   const constituency = await prisma.constituency.findUnique({
     where: { id },
     include: {
+      district: { include: { province: { select: { id: true, name: true, nameNp: true } } } },
       services: {
         include: {
           _count: { select: { reports: true } },
@@ -22,7 +23,17 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json(constituency);
+  // Resolve Nepali province name: prefer district relation, fall back to name lookup
+  let provinceNp: string | null = constituency.district?.province?.nameNp ?? null;
+  if (!provinceNp && constituency.province) {
+    const prov = await prisma.province.findFirst({
+      where: { name: { contains: constituency.province } },
+      select: { nameNp: true },
+    });
+    provinceNp = prov?.nameNp ?? null;
+  }
+
+  return NextResponse.json({ ...constituency, provinceNp });
 }
 
 export async function PUT(
@@ -36,11 +47,11 @@ export async function PUT(
 
   const { id } = await params;
   const body = await req.json();
-  const { name, nameNp, imageUrl, description, province } = body;
+  const { name, nameNp, imageUrl, description, districtId } = body;
 
   const constituency = await prisma.constituency.update({
     where: { id },
-    data: { name, nameNp, imageUrl, description, province },
+    data: { name, nameNp, imageUrl, description, districtId: districtId || null },
   });
 
   return NextResponse.json(constituency);

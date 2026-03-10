@@ -9,8 +9,10 @@ interface Constituency {
   name: string;
   nameNp: string;
   province: string | null;
+  provinceNp?: string | null;
   imageUrl: string | null;
   _count: { services: number; reports: number };
+  district?: { province?: { name: string; nameNp: string } | null } | null;
 }
 
 export default function ConstituenciesPage() {
@@ -46,13 +48,13 @@ export default function ConstituenciesPage() {
         <div className="flex gap-3 mb-6">
           <div className="flex-1 bg-orange-50 rounded-2xl py-3 text-center">
             <p className="text-2xl font-extrabold text-orange-600">{constituencies.length}</p>
-            <p className="text-xs text-gray-600">Constituencies</p>
+            <p className="text-xs text-gray-600">{t("nav.constituencies")}</p>
           </div>
           <div className="flex-1 bg-orange-50 rounded-2xl py-3 text-center">
             <p className="text-2xl font-extrabold text-orange-600">
               {constituencies.reduce((sum, c) => sum + c._count.services, 0)}
             </p>
-            <p className="text-xs text-gray-600">Public Services</p>
+            <p className="text-xs text-gray-600">{t("nav.services")}</p>
           </div>
           <div className="flex-1 bg-orange-50 rounded-2xl py-3 text-center">
             <p className="text-2xl font-extrabold text-orange-600">
@@ -94,6 +96,7 @@ export default function ConstituenciesPage() {
               name={c.name}
               nameNp={c.nameNp}
               province={c.province}
+              provinceNp={c.provinceNp ?? null}
               imageUrl={c.imageUrl}
               serviceCount={c._count.services}
               reportCount={c._count.reports}

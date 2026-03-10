@@ -38,7 +38,7 @@ function getNestedValue(obj: Record<string, unknown>, path: string): string {
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  const [locale, setLocaleState] = useState<Locale>("np");
 
   useEffect(() => {
     const saved = localStorage.getItem("locale") as Locale | null;

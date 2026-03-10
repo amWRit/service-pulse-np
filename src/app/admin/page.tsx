@@ -4,39 +4,24 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n";
+import ConstituencyList from "@/components/admin/ConstituencyList";
+import AddConstituencyModal from "@/components/admin/AddConstituencyModal";
+import ServiceList from "@/components/admin/ServiceList";
+import AddServiceModal from "@/components/admin/AddServiceModal";
+import ReportList from "@/components/admin/ReportList";
+import ProvinceList from "@/components/admin/ProvinceList";
+import ProvinceModal from "@/components/admin/ProvinceModal";
+import DistrictList from "@/components/admin/DistrictList";
+import DistrictModal from "@/components/admin/DistrictModal";
+import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData } from "@/components/admin/types";
 
-interface Constituency {
-  id: string;
-  name: string;
-  nameNp: string;
-  province?: string;
-  _count?: { services: number; reports: number };
-}
-
-interface Service {
-  id: string;
-  name: string;
-  nameNp: string;
-  type: string;
-  location?: string;
-  constituencyId: string;
-  constituency?: { name: string };
-  reportCount?: number;
-}
-
-interface Report {
-  id: string;
-  serviceTimeMinutes: number;
-  rating: number;
-  comment?: string;
-  isHidden: boolean;
-  isModerated: boolean;
-  createdAt: string;
-  publicService?: { name: string };
-  user?: { name: string } | null;
-}
-
-type Tab = "constituencies" | "services" | "reports";
+type Tab = "constituencies" | "services" | "reports" | "provinces" | "districts";
+type Modal =
+  | "addConstituency" | "editConstituency"
+  | "addService" | "editService"
+  | "addProvince" | "editProvince"
+  | "addDistrict" | "editDistrict"
+  | null;
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -46,12 +31,14 @@ export default function AdminPage() {
   const [constituencies, setConstituencies] = useState<Constituency[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
   const [loading, setLoading] = useState(true);
-  const [modal, setModal] = useState<null | "addConstituency" | "addService">(null);
-
-  // Form state
-  const [cForm, setCForm] = useState({ name: "", nameNp: "", province: "", imageUrl: "", description: "" });
-  const [sForm, setSForm] = useState({ name: "", nameNp: "", type: "other", location: "", description: "", descriptionNp: "", constituencyId: "" });
+  const [modal, setModal] = useState<Modal>(null);
+  const [editingConstituency, setEditingConstituency] = useState<Constituency | null>(null);
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [editingProvince, setEditingProvince] = useState<Province | null>(null);
+  const [editingDistrict, setEditingDistrict] = useState<District | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -64,14 +51,18 @@ export default function AdminPage() {
 
   const loadAll = async () => {
     setLoading(true);
-    const [c, s, r] = await Promise.all([
+    const [c, s, r, p, d] = await Promise.all([
       fetch("/api/constituencies").then((x) => x.json()),
       fetch("/api/services").then((x) => x.json()),
       fetch("/api/reports").then((x) => x.json()),
+      fetch("/api/provinces").then((x) => x.json()),
+      fetch("/api/districts").then((x) => x.json()),
     ]);
     setConstituencies(c);
     setServices(s);
     setReports(r);
+    setProvinces(p);
+    setDistricts(d);
     setLoading(false);
   };
 
@@ -102,28 +93,77 @@ export default function AdminPage() {
     loadAll();
   };
 
-  const submitConstituency = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await fetch("/api/constituencies", {
-      method: "POST",
+  const submitConstituency = async (form: ConstituencyFormData) => {
+    const url = editingConstituency
+      ? `/api/constituencies/${editingConstituency.id}`
+      : "/api/constituencies";
+    await fetch(url, {
+      method: editingConstituency ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(cForm),
+      body: JSON.stringify(form),
     });
-    setCForm({ name: "", nameNp: "", province: "", imageUrl: "", description: "" });
     setModal(null);
+    setEditingConstituency(null);
     loadAll();
   };
 
-  const submitService = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await fetch("/api/services", {
-      method: "POST",
+  const submitService = async (form: ServiceFormData) => {
+    const url = editingService
+      ? `/api/services/${editingService.id}`
+      : "/api/services";
+    await fetch(url, {
+      method: editingService ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(sForm),
+      body: JSON.stringify(form),
     });
-    setSForm({ name: "", nameNp: "", type: "other", location: "", description: "", descriptionNp: "", constituencyId: "" });
     setModal(null);
+    setEditingService(null);
     loadAll();
+  };
+
+  const openEditConstituency = (c: Constituency) => { setEditingConstituency(c); setModal("editConstituency"); };
+  const openEditService = (s: Service) => { setEditingService(s); setModal("editService"); };
+  const openEditProvince = (p: Province) => { setEditingProvince(p); setModal("editProvince"); };
+  const openEditDistrict = (d: District) => { setEditingDistrict(d); setModal("editDistrict"); };
+
+  const submitProvince = async (form: { name: string; nameNp: string }) => {
+    const url = editingProvince ? `/api/provinces/${editingProvince.id}` : "/api/provinces";
+    await fetch(url, {
+      method: editingProvince ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    setModal(null); setEditingProvince(null); loadAll();
+  };
+
+  const deleteProvince = async (id: string) => {
+    if (!confirm(t("admin.confirmDelete"))) return;
+    await fetch(`/api/provinces/${id}`, { method: "DELETE" });
+    loadAll();
+  };
+
+  const submitDistrict = async (form: { name: string; nameNp: string; provinceId: string }) => {
+    const url = editingDistrict ? `/api/districts/${editingDistrict.id}` : "/api/districts";
+    await fetch(url, {
+      method: editingDistrict ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    setModal(null); setEditingDistrict(null); loadAll();
+  };
+
+  const deleteDistrict = async (id: string) => {
+    if (!confirm(t("admin.confirmDelete"))) return;
+    await fetch(`/api/districts/${id}`, { method: "DELETE" });
+    loadAll();
+  };
+
+  const closeModal = () => {
+    setModal(null);
+    setEditingConstituency(null);
+    setEditingService(null);
+    setEditingProvince(null);
+    setEditingDistrict(null);
   };
 
   if (status === "loading" || loading) {
@@ -134,195 +174,141 @@ export default function AdminPage() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900">{t("admin.dashboard")} 🔒</h1>
-        <button
-          onClick={() => setModal(tab === "constituencies" ? "addConstituency" : "addService")}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
-        >
-          + {tab === "constituencies" ? t("admin.addConstituency") : t("admin.addService")}
-        </button>
+        {tab !== "reports" && (
+          <button
+            onClick={() => {
+              if (tab === "constituencies") setModal("addConstituency");
+              else if (tab === "services") setModal("addService");
+              else if (tab === "provinces") setModal("addProvince");
+              else if (tab === "districts") setModal("addDistrict");
+            }}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+          >
+            + {tab === "constituencies" ? t("admin.addConstituency")
+               : tab === "services" ? t("admin.addService")
+               : tab === "provinces" ? "Add Province"
+               : "Add District"}
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b">
-        {(["constituencies", "services", "reports"] as Tab[]).map((t_) => (
+      <div className="flex flex-wrap gap-1 mb-6 border-b">
+        {([
+          { key: "constituencies", label: t("admin.constituencies"), count: constituencies.length },
+          { key: "services", label: t("admin.services"), count: services.length },
+          { key: "reports", label: t("admin.reports"), count: reports.length },
+          { key: "provinces", label: "Provinces", count: provinces.length },
+          { key: "districts", label: "Districts", count: districts.length },
+        ] as { key: Tab; label: string; count: number }[]).map(({ key, label, count }) => (
           <button
-            key={t_}
-            onClick={() => setTab(t_)}
+            key={key}
+            onClick={() => setTab(key)}
             className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${
-              tab === t_ ? "border-orange-500 text-orange-600" : "border-transparent text-gray-500 hover:text-gray-800"
+              tab === key ? "border-orange-500 text-orange-600" : "border-transparent text-gray-500 hover:text-gray-800"
             }`}
           >
-            {t(`admin.${t_}`)} ({t_ === "constituencies" ? constituencies.length : t_ === "services" ? services.length : reports.length})
+            {label} ({count})
           </button>
         ))}
       </div>
 
-      {/* Constituencies Tab */}
       {tab === "constituencies" && (
-        <div className="space-y-2">
-          {constituencies.map((c) => (
-            <div key={c.id} className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4">
-              <div>
-                <p className="font-semibold text-gray-900">{c.name} / {c.nameNp}</p>
-                <p className="text-xs text-gray-500">{c.province} · {c._count?.services ?? 0} services · {c._count?.reports ?? 0} reports</p>
-              </div>
-              <button
-                onClick={() => deleteConstituency(c.id)}
-                className="text-red-500 hover:text-red-700 text-sm font-medium"
-              >
-                {t("admin.delete")}
-              </button>
-            </div>
-          ))}
-        </div>
+        <ConstituencyList
+          constituencies={constituencies}
+          provinces={provinces}
+          districts={districts}
+          onEdit={openEditConstituency}
+          onDelete={deleteConstituency}
+        />
       )}
 
-      {/* Services Tab */}
       {tab === "services" && (
-        <div className="space-y-2">
-          {services.map((s) => (
-            <div key={s.id} className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4">
-              <div>
-                <p className="font-semibold text-gray-900">{s.name} / {s.nameNp}</p>
-                <p className="text-xs text-gray-500">
-                  {t(`service.type.${s.type}`)} · {s.location} · {s.constituency?.name}
-                </p>
-              </div>
-              <button
-                onClick={() => deleteService(s.id)}
-                className="text-red-500 hover:text-red-700 text-sm font-medium"
-              >
-                {t("admin.delete")}
-              </button>
-            </div>
-          ))}
-        </div>
+        <ServiceList
+          services={services}
+          constituencies={constituencies}
+          provinces={provinces}
+          districts={districts}
+          onEdit={openEditService}
+          onDelete={deleteService}
+        />
       )}
 
-      {/* Reports Tab */}
       {tab === "reports" && (
-        <div className="space-y-2">
-          {reports.map((r) => (
-            <div key={r.id} className={`bg-white rounded-xl border p-4 ${r.isHidden ? "opacity-50" : ""}`}>
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-semibold text-gray-900 text-sm">
-                    {r.publicService?.name} · ⭐{r.rating} · {r.serviceTimeMinutes}min
-                  </p>
-                  {r.comment && <p className="text-gray-600 text-sm mt-0.5">"{r.comment}"</p>}
-                  <p className="text-xs text-gray-400 mt-1">
-                    {r.user?.name ?? "Anonymous"} · {new Date(r.createdAt).toLocaleDateString()}
-                    {r.isHidden && " · [Hidden]"}
-                  </p>
-                </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <button
-                    onClick={() => moderateReport(r.id, !r.isHidden)}
-                    className={`text-xs font-medium px-2 py-1 rounded border ${
-                      r.isHidden ? "text-green-600 border-green-300 hover:bg-green-50" : "text-yellow-600 border-yellow-300 hover:bg-yellow-50"
-                    }`}
-                  >
-                    {r.isHidden ? t("admin.approve") : t("admin.hide")}
-                  </button>
-                  <button
-                    onClick={() => deleteReport(r.id)}
-                    className="text-xs font-medium px-2 py-1 rounded border text-red-600 border-red-300 hover:bg-red-50"
-                  >
-                    {t("admin.delete")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ReportList
+          reports={reports}
+          constituencies={constituencies}
+          provinces={provinces}
+          districts={districts}
+          onModerate={moderateReport}
+          onDelete={deleteReport}
+        />
       )}
 
-      {/* Modal: Add Constituency */}
-      {modal === "addConstituency" && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-            <h2 className="text-lg font-bold mb-4">{t("admin.addConstituency")}</h2>
-            <form onSubmit={submitConstituency} className="space-y-3">
-              {[
-                { label: "Name (English)", value: cForm.name, key: "name" },
-                { label: "Name (Nepali)", value: cForm.nameNp, key: "nameNp" },
-                { label: "Province", value: cForm.province, key: "province" },
-                { label: "Image URL", value: cForm.imageUrl, key: "imageUrl" },
-                { label: "Description", value: cForm.description, key: "description" },
-              ].map((field) => (
-                <div key={field.key}>
-                  <label className="text-sm font-medium text-gray-700">{field.label}</label>
-                  <input
-                    value={field.value}
-                    onChange={(e) => setCForm({ ...cForm, [field.key]: e.target.value })}
-                    className="mt-1 w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                  />
-                </div>
-              ))}
-              <div className="flex gap-2 pt-2">
-                <button type="submit" className="flex-1 bg-orange-500 text-white rounded-lg py-2 font-semibold text-sm">{t("admin.save")}</button>
-                <button type="button" onClick={() => setModal(null)} className="flex-1 border rounded-lg py-2 text-sm">{t("admin.cancel")}</button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {tab === "provinces" && (
+        <ProvinceList provinces={provinces} onEdit={openEditProvince} onDelete={deleteProvince} />
       )}
 
-      {/* Modal: Add Service */}
-      {modal === "addService" && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-bold mb-4">{t("admin.addService")}</h2>
-            <form onSubmit={submitService} className="space-y-3">
-              {[
-                { label: "Name (English)", value: sForm.name, key: "name" },
-                { label: "Name (Nepali)", value: sForm.nameNp, key: "nameNp" },
-                { label: "Location", value: sForm.location, key: "location" },
-                { label: "Description (English)", value: sForm.description, key: "description" },
-                { label: "Description (Nepali)", value: sForm.descriptionNp, key: "descriptionNp" },
-              ].map((field) => (
-                <div key={field.key}>
-                  <label className="text-sm font-medium text-gray-700">{field.label}</label>
-                  <input
-                    value={field.value}
-                    onChange={(e) => setSForm({ ...sForm, [field.key]: e.target.value })}
-                    className="mt-1 w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                  />
-                </div>
-              ))}
-              <div>
-                <label className="text-sm font-medium text-gray-700">Type</label>
-                <select
-                  value={sForm.type}
-                  onChange={(e) => setSForm({ ...sForm, type: e.target.value })}
-                  className="mt-1 w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                >
-                  {["hospital","government_office","transport","education","utility","police","bank","other"].map((t_) => (
-                    <option key={t_} value={t_}>{t_}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Constituency</label>
-                <select
-                  value={sForm.constituencyId}
-                  onChange={(e) => setSForm({ ...sForm, constituencyId: e.target.value })}
-                  className="mt-1 w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                  required
-                >
-                  <option value="">Select constituency...</option>
-                  {constituencies.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-2 pt-2">
-                <button type="submit" className="flex-1 bg-orange-500 text-white rounded-lg py-2 font-semibold text-sm">{t("admin.save")}</button>
-                <button type="button" onClick={() => setModal(null)} className="flex-1 border rounded-lg py-2 text-sm">{t("admin.cancel")}</button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {tab === "districts" && (
+        <DistrictList districts={districts} provinces={provinces} onEdit={openEditDistrict} onDelete={deleteDistrict} />
+      )}
+
+      {(modal === "addProvince" || modal === "editProvince") && (
+        <ProvinceModal
+          initialData={editingProvince ? { name: editingProvince.name, nameNp: editingProvince.nameNp } : undefined}
+          onSubmit={submitProvince}
+          onClose={closeModal}
+        />
+      )}
+
+      {(modal === "addDistrict" || modal === "editDistrict") && (
+        <DistrictModal
+          provinces={provinces}
+          initialData={editingDistrict ? { name: editingDistrict.name, nameNp: editingDistrict.nameNp, provinceId: editingDistrict.provinceId } : undefined}
+          onSubmit={submitDistrict}
+          onClose={closeModal}
+        />
+      )}
+
+      {(modal === "addConstituency" || modal === "editConstituency") && (
+        <AddConstituencyModal
+          provinces={provinces}
+          districts={districts}
+          initialData={
+            editingConstituency
+              ? {
+                  name: editingConstituency.name,
+                  nameNp: editingConstituency.nameNp,
+                  districtId: editingConstituency.districtId ?? "",
+                  imageUrl: editingConstituency.imageUrl ?? "",
+                  description: editingConstituency.description ?? "",
+                }
+              : undefined
+          }
+          onSubmit={submitConstituency}
+          onClose={closeModal}
+        />
+      )}
+
+      {(modal === "addService" || modal === "editService") && (
+        <AddServiceModal
+          constituencies={constituencies}
+          initialData={
+            editingService
+              ? {
+                  name: editingService.name,
+                  nameNp: editingService.nameNp,
+                  type: editingService.type,
+                  location: editingService.location ?? "",
+                  description: editingService.description ?? "",
+                  descriptionNp: editingService.descriptionNp ?? "",
+                  constituencyId: editingService.constituencyId,
+                }
+              : undefined
+          }
+          onSubmit={submitService}
+          onClose={closeModal}
+        />
       )}
     </div>
   );
