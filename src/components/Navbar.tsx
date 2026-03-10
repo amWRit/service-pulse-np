@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useI18n } from "@/lib/i18n";
 import { useState } from "react";
+import { Activity } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -15,7 +16,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-lg text-orange-600">
-          <span className="text-2xl">📡</span>
+          <Activity className="w-6 h-6" />
           <span className="hidden sm:block">Service Pulse</span>
           <span className="block sm:hidden">SP</span>
         </Link>
@@ -25,8 +26,8 @@ export default function Navbar() {
           <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
             {t("nav.home")}
           </Link>
-          <Link href="/leaderboard" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
-            {t("nav.leaderboard")}
+          <Link href="/constituencies" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+            {t("nav.constituencies")}
           </Link>
           {session?.user.role === "admin" && (
             <Link href="/admin" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
@@ -80,7 +81,7 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t px-4 py-3 flex flex-col gap-3">
           <Link href="/" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.home")}</Link>
-          <Link href="/leaderboard" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.leaderboard")}</Link>
+          <Link href="/constituencies" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.constituencies")}</Link>
           {session?.user.role === "admin" && (
             <Link href="/admin" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.admin")}</Link>
           )}

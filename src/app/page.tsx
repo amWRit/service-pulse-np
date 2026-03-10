@@ -2,104 +2,164 @@
 
 import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
-import ConstituencyCard from "@/components/ConstituencyCard";
+import Link from "next/link";
+import StarRating from "@/components/StarRating";
 
-interface Constituency {
+interface ServiceEntry {
   id: string;
   name: string;
   nameNp: string;
-  province: string | null;
-  imageUrl: string | null;
-  _count: { services: number; reports: number };
+  type: string;
+  avgRating: number;
+  avgTime: number;
+  reportCount: number;
+  constituency: { name: string; nameNp: string };
 }
+
+interface LeaderboardData {
+  fastest: ServiceEntry[];
+  slowest: ServiceEntry[];
+  best: ServiceEntry[];
+  worst: ServiceEntry[];
+}
+
+interface Stats {
+  constituencies: number;
+  services: number;
+  reports: number;
+}
+
+const TABS = ["fastest", "slowest", "best", "worst"] as const;
+
+const TAB_EMOJI: Record<string, string> = {
+  fastest: "⚡",
+  slowest: "🐢",
+  best: "🏆",
+  worst: "😤",
+};
+
+const TAB_SHORT: Record<string, string> = {
+  fastest: "Fastest",
+  slowest: "Slowest",
+  best: "Best",
+  worst: "Worst",
+};
 
 export default function HomePage() {
   const { t, locale } = useI18n();
-  const [constituencies, setConstituencies] = useState<Constituency[]>([]);
-  const [search, setSearch] = useState("");
+  const [data, setData] = useState<LeaderboardData | null>(null);
+  const [active, setActive] = useState<(typeof TABS)[number]>("fastest");
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<Stats>({ constituencies: 0, services: 0, reports: 0 });
 
   useEffect(() => {
+    fetch("/api/leaderboard")
+      .then((r) => r.json())
+      .then((d) => { setData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+
     fetch("/api/constituencies")
       .then((r) => r.json())
-      .then((data) => { setConstituencies(data); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then((constituencies: { _count: { services: number; reports: number } }[]) => {
+        setStats({
+          constituencies: constituencies.length,
+          services: constituencies.reduce((sum, c) => sum + c._count.services, 0),
+          reports: constituencies.reduce((sum, c) => sum + c._count.reports, 0),
+        });
+      })
+      .catch(() => {});
   }, []);
 
-  const filtered = constituencies.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.nameNp.includes(search)
-  );
-
-  const totalReports = constituencies.reduce((sum, c) => sum + c._count.reports, 0);
+  const entries = data?.[active] ?? [];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Hero */}
-      <div className="text-center py-10 mb-8">
-        <div className="text-6xl mb-4">📡</div>
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
-          {t("home.title")}
-        </h1>
-        <p className="text-lg text-gray-600 mb-6">{t("home.subtitle")}</p>
-
-        {/* Stats */}
-        <div className="flex flex-wrap justify-center gap-6 mb-8">
-          <div className="bg-orange-50 rounded-2xl px-6 py-3 text-center">
-            <p className="text-3xl font-extrabold text-orange-600">{constituencies.length}</p>
-            <p className="text-sm text-gray-600">Constituencies</p>
-          </div>
-          <div className="bg-orange-50 rounded-2xl px-6 py-3 text-center">
-            <p className="text-3xl font-extrabold text-orange-600">
-              {constituencies.reduce((sum, c) => sum + c._count.services, 0)}
-            </p>
-            <p className="text-sm text-gray-600">Public Services</p>
-          </div>
-          <div className="bg-orange-50 rounded-2xl px-6 py-3 text-center">
-            <p className="text-3xl font-extrabold text-orange-600">{totalReports}</p>
-            <p className="text-sm text-gray-600">{t("home.totalReports")}</p>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="max-w-md mx-auto relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("home.searchPlaceholder")}
-            className="w-full pl-12 pr-4 py-4 rounded-2xl border shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 text-lg"
-          />
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* Leaderboard heading */}
+      <div className="flex items-center gap-2 mb-5 sm:justify-center sm:flex-col sm:gap-1">
+        <span className="text-2xl sm:text-4xl">🏆</span>
+        <div>
+          <h2 className="text-lg sm:text-2xl font-extrabold text-gray-900 sm:text-center">{t("leaderboard.title")}</h2>
+          <p className="hidden sm:block text-sm text-gray-400 text-center">Based on real citizen reports</p>
         </div>
       </div>
 
-      {/* Constituencies Grid */}
-      <h2 className="text-xl font-bold text-gray-800 mb-4">
-        {t("home.selectConstituency")}
-      </h2>
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActive(tab)}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-full font-semibold text-sm transition-all border ${
+              active === tab
+                ? "bg-orange-500 text-white border-orange-500 shadow-md scale-105"
+                : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+            }`}
+          >
+            <span>{TAB_EMOJI[tab]}</span>
+            <span className="sm:hidden">{TAB_SHORT[tab]}</span>
+            <span className="hidden sm:inline">{t(`leaderboard.${tab}`)}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Entries */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl h-52 animate-pulse border" />
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-gray-400 text-lg">
-          No results found for &quot;{search}&quot;
+      ) : entries.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <p className="text-4xl mb-2">📭</p>
+          <p>No data yet. Submit some reports!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((c) => (
-            <ConstituencyCard
-              key={c.id}
-              id={c.id}
-              name={c.name}
-              nameNp={c.nameNp}
-              province={c.province}
-              imageUrl={c.imageUrl}
-              serviceCount={c._count.services}
-              reportCount={c._count.reports}
-            />
+        <div className="space-y-2">
+          {entries.map((entry, index) => (
+            <Link
+              key={entry.id}
+              href={`/services/${entry.id}`}
+              className="flex items-center gap-3 bg-white rounded-2xl border p-4 shadow-sm hover:shadow-md hover:border-orange-300 transition-all"
+            >
+              {/* Rank */}
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-base flex-shrink-0 ${
+                index === 0 ? "bg-yellow-400 text-white" :
+                index === 1 ? "bg-gray-300 text-gray-700" :
+                index === 2 ? "bg-orange-300 text-white" :
+                "bg-gray-100 text-gray-500"
+              }`}>
+                {index + 1}
+              </div>
+
+              {/* Name */}
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-gray-900 leading-tight">
+                  {locale === "np" ? entry.nameNp : entry.name}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {locale === "np" ? entry.constituency.nameNp : entry.constituency.name}
+                  {" · "}{t(`service.type.${entry.type}`)}
+                </p>
+                {/* Stats: inline on sm+, stacked below on mobile */}
+                <div className="flex items-center gap-3 mt-2 sm:hidden flex-wrap">
+                  <span className="font-bold text-orange-600 text-sm">
+                    {Math.round(entry.avgTime)} <span className="text-xs font-normal text-gray-500">{t("home.minutes")}</span>
+                  </span>
+                  <StarRating rating={Math.round(entry.avgRating)} size="sm" />
+                  <span className="text-xs text-gray-400">{entry.reportCount} reports</span>
+                </div>
+              </div>
+
+              {/* Stats: right side on sm+ */}
+              <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
+                <p className="font-bold text-orange-600 text-lg w-20 text-right">
+                  {Math.round(entry.avgTime)} <span className="text-xs font-normal text-gray-500">{t("home.minutes")}</span>
+                </p>
+                <StarRating rating={Math.round(entry.avgRating)} size="sm" />
+                <span className="text-xs text-gray-400">{entry.reportCount} reports</span>
+              </div>
+            </Link>
           ))}
         </div>
       )}

@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "leaderboard": "Leaderboard",
+    "constituencies": "Constituencies",
     "login": "Login",
     "logout": "Logout",
     "admin": "Admin",

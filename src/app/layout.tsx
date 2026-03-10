@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
             <main className="min-h-screen">{children}</main>
             <footer className="bg-white border-t mt-12 py-6 text-center text-sm text-gray-500">
-              <p>Service Pulse | सेवा पल्स &copy; {new Date().getFullYear()}</p>
+              <p>Service Pulse | सेवा सूचक &copy; {new Date().getFullYear()}</p>
               <p className="text-xs mt-1">Built to hold public services accountable in Nepal 🇳🇵</p>
             </footer>
           </I18nProvider>
