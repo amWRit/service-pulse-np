@@ -16,7 +16,7 @@ interface ServiceListProps {
 }
 
 export default function ServiceList({ services, constituencies, provinces, districts, onEdit, onDelete }: ServiceListProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [provinceId, setProvinceId] = useState("");
   const [districtId, setDistrictId] = useState("");
   const [constituencyId, setConstituencyId] = useState("");
@@ -70,7 +70,7 @@ export default function ServiceList({ services, constituencies, provinces, distr
           >
             <div>
               <p className="font-semibold text-gray-900">
-                {s.name} / {s.nameNp}
+                {locale === "np" ? s.nameNp : s.name}
               </p>
               <p className="text-xs text-gray-500">
                 {t(`service.type.${s.type}`)} · {s.location} · {s.constituency?.name}
