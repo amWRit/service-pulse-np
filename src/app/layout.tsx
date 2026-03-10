@@ -9,8 +9,17 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Service Pulse | सेवा पल्स",
+  title: "Service Pulse | सेवा सूचक",
   description: "Real-time public service experience tracker for Nepal",
+  icons: {
+    icon: [
+      { url: "/icons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon.ico" },
+    ],
+    apple: { url: "/icons/apple-touch-icon.png" },
+  },
+  manifest: "/icons/site.webmanifest",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
