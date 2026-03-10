@@ -27,7 +27,7 @@
       "normal": "Normal",
       "quiet": "Quiet"
     },
-    "report": "Report Experience",
+    "report": "Report",
     "avgWait": "Avg Wait",
     "avgRating": "Avg Rating",
     "reports": "Reports",
@@ -64,7 +64,8 @@
     "rank": "Rank",
     "service": "Service",
     "avgTime": "Avg Time (min)",
-    "rating": "Rating"
+    "rating": "Rating",
+    "reports": "Reports"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
@@ -85,7 +86,13 @@
     "description": "Description",
     "save": "Save",
     "cancel": "Cancel",
-    "confirmDelete": "Are you sure you want to delete this?"
+    "confirmDelete": "Are you sure you want to delete this?",
+    "districts": "Districts",
+    "provinces": "Provinces",
+    "allProvinces": "All Provinces",
+    "allDistricts": "All Districts",
+    "allConstituencies": "All Constituencies",
+    "servicePulse": "Service Pulse"
   },
   "badges": {
     "title": "Your Badges",

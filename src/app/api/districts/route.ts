@@ -8,7 +8,7 @@ export async function GET(req: Request) {
   const districts = await prisma.district.findMany({
     where: provinceId ? { provinceId } : undefined,
     include: {
-      province: { select: { id: true, name: true } },
+      province: { select: { id: true, name: true, nameNp: true } },
       _count: { select: { constituencies: true } },
     },
     orderBy: { name: "asc" },
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   const district = await prisma.district.create({
     data: { name: body.name, nameNp: body.nameNp, provinceId: body.provinceId },
-    include: { province: { select: { id: true, name: true } } },
+    include: { province: { select: { id: true, name: true, nameNp: true } } },
   });
   return NextResponse.json(district);
 }

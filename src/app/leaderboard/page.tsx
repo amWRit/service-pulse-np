@@ -125,7 +125,7 @@ export default function LeaderboardPage() {
                   <StarRating rating={Math.round(entry.avgRating)} size="sm" />
                 </div>
                 <div className="text-xs text-gray-400 text-right">
-                  {entry.reportCount} reports
+                  {entry.reportCount} {t("service.reports")}
                 </div>
               </div>
             </Link>

@@ -10,7 +10,7 @@ export interface District {
   name: string;
   nameNp: string;
   provinceId: string;
-  province?: Province;
+  province?: { id: string; name: string; nameNp: string };
   _count?: { constituencies: number };
 }
 
@@ -19,8 +19,15 @@ export interface Constituency {
   name: string;
   nameNp: string;
   province?: string;
+  provinceNp?: string | null;
   districtId?: string;
-  district?: { id: string; name: string; provinceId: string; province?: { id: string; name: string } };
+  district?: {
+    id: string;
+    name: string;
+    nameNp: string;
+    provinceId: string;
+    province?: { id: string; name: string; nameNp: string };
+  };
   imageUrl?: string;
   description?: string;
   _count?: { services: number; reports: number };

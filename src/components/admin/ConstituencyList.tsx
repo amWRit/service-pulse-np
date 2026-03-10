@@ -15,7 +15,7 @@ interface ConstituencyListProps {
 }
 
 export default function ConstituencyList({ constituencies, provinces, districts, onEdit, onDelete }: ConstituencyListProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [provinceId, setProvinceId] = useState("");
   const [districtId, setDistrictId] = useState("");
 
@@ -48,13 +48,13 @@ export default function ConstituencyList({ constituencies, provinces, districts,
           >
             <div>
               <p className="font-semibold text-gray-900">
-                {c.name} / {c.nameNp}
+                {locale === "np" ? c.nameNp : c.name}
               </p>
               <p className="text-xs text-gray-500">
                 {c.district?.name
-                  ? `${c.district.province?.name} · ${c.district.name}`
-                  : c.province}
-                {" · "}{c._count?.services ?? 0} services · {c._count?.reports ?? 0} reports
+                  ? `${locale === "np" ? c.district.province?.nameNp : c.district.province?.name} · ${locale === "np" ? c.district.nameNp : c.district.name}`
+                  : (locale === "np" ? c.provinceNp : c.province)}
+                {" · "}{c._count?.services ?? 0} {t("nav.services")} · {c._count?.reports ?? 0} {t("service.reports")}
               </p>
             </div>
             <div className="flex gap-1">

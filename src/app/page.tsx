@@ -151,7 +151,7 @@ export default function HomePage() {
                     {Math.round(entry.avgTime)} <span className="text-xs font-normal text-gray-500">{t("home.minutes")}</span>
                   </span>
                   <StarRating rating={Math.round(entry.avgRating)} size="sm" />
-                  <span className="text-xs text-gray-400">{entry.reportCount} reports</span>
+                  <span className="text-xs text-gray-400">{entry.reportCount} {t("service.reports")}</span>
                 </div>
               </div>
 
@@ -161,7 +161,7 @@ export default function HomePage() {
                   {Math.round(entry.avgTime)} <span className="text-xs font-normal text-gray-500">{t("home.minutes")}</span>
                 </p>
                 <StarRating rating={Math.round(entry.avgRating)} size="sm" />
-                <span className="text-xs text-gray-400">{entry.reportCount} reports</span>
+                <span className="text-xs text-gray-400">{entry.reportCount} {t("service.reports")}</span>
               </div>
             </Link>
           ))}
@@ -175,7 +175,7 @@ export default function HomePage() {
           className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold px-5 py-3.5 rounded-full shadow-lg transition-all"
         >
           <Plus className="w-5 h-5" />
-          <span className="text-sm">Report</span>
+          <span className="text-sm">{t("service.report")}</span>
         </button>
       )}
 

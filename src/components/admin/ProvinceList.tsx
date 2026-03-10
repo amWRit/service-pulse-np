@@ -11,7 +11,7 @@ interface ProvinceListProps {
 }
 
 export default function ProvinceList({ provinces, onEdit, onDelete }: ProvinceListProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <div className="space-y-2">
@@ -21,8 +21,8 @@ export default function ProvinceList({ provinces, onEdit, onDelete }: ProvinceLi
           className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4"
         >
           <div>
-            <p className="font-semibold text-gray-900">{p.name} / {p.nameNp}</p>
-            <p className="text-xs text-gray-500">{p._count?.districts ?? 0} districts</p>
+            <p className="font-semibold text-gray-900">{locale === "np" ? p.nameNp : p.name}</p>
+            <p className="text-xs text-gray-500">{p._count?.districts ?? 0} {t("admin.districts")}</p>
           </div>
           <div className="flex gap-1">
             <button

@@ -17,8 +17,8 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-lg text-orange-600">
           <Activity className="w-6 h-6" />
-          <span className="hidden sm:block">Service Pulse</span>
-          <span className="block sm:hidden">SP</span>
+          <span className="hidden sm:block">{t("admin.servicePulse")}</span>
+          <span className="block sm:hidden"></span>
         </Link>
 
         {/* Desktop Nav */}

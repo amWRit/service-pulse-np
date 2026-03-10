@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { I18nProvider } from "@/lib/i18n";
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SessionWrapper from "@/components/SessionWrapper";
 
@@ -22,7 +23,12 @@ export const metadata: Metadata = {
   manifest: "/icons/site.webmanifest",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 min-h-screen`}>
@@ -30,10 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <I18nProvider>
             <Navbar />
             <main className="min-h-screen">{children}</main>
-            <footer className="bg-white border-t mt-12 py-6 text-center text-sm text-gray-500">
-              <p>Service Pulse | सेवा सूचक &copy; {new Date().getFullYear()}</p>
-              <p className="text-xs mt-1">Built to hold public services accountable in Nepal 🇳🇵</p>
-            </footer>
+            <Footer />
           </I18nProvider>
         </SessionWrapper>
       </body>

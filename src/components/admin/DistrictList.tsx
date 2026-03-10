@@ -13,7 +13,7 @@ interface DistrictListProps {
 }
 
 export default function DistrictList({ districts, provinces, onEdit, onDelete }: DistrictListProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [provinceId, setProvinceId] = useState("");
 
   const filtered = useMemo(
@@ -31,7 +31,7 @@ export default function DistrictList({ districts, provinces, onEdit, onDelete }:
             !provinceId ? "bg-orange-500 text-white border-orange-500" : "text-gray-600 border-gray-300 hover:border-orange-400"
           }`}
         >
-          All Provinces
+          {t("admin.allProvinces")}
         </button>
         {provinces.map((p) => (
           <button
@@ -41,7 +41,7 @@ export default function DistrictList({ districts, provinces, onEdit, onDelete }:
               provinceId === p.id ? "bg-orange-500 text-white border-orange-500" : "text-gray-600 border-gray-300 hover:border-orange-400"
             }`}
           >
-            {p.name}
+            {locale === "np" ? p.nameNp : p.name}
           </button>
         ))}
       </div>
@@ -53,9 +53,9 @@ export default function DistrictList({ districts, provinces, onEdit, onDelete }:
             className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4"
           >
             <div>
-              <p className="font-semibold text-gray-900">{d.name} / {d.nameNp}</p>
+              <p className="font-semibold text-gray-900">{locale === "np" ? d.nameNp : d.name}</p>
               <p className="text-xs text-gray-500">
-                {d.province?.name} · {d._count?.constituencies ?? 0} constituencies
+                {locale === "np" ? d.province?.nameNp : d.province?.name} · {d._count?.constituencies ?? 0} {t("nav.constituencies")}
               </p>
             </div>
             <div className="flex gap-1">

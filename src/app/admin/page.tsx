@@ -198,8 +198,8 @@ export default function AdminPage() {
           { key: "constituencies", label: t("admin.constituencies"), count: constituencies.length },
           { key: "services", label: t("admin.services"), count: services.length },
           { key: "reports", label: t("admin.reports"), count: reports.length },
-          { key: "provinces", label: "Provinces", count: provinces.length },
-          { key: "districts", label: "Districts", count: districts.length },
+          { key: "provinces", label: t("admin.provinces"), count: provinces.length },
+          { key: "districts", label: t("admin.districts"), count: districts.length },
         ] as { key: Tab; label: string; count: number }[]).map(({ key, label, count }) => (
           <button
             key={key}
