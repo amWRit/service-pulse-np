@@ -1,8 +1,26 @@
+export interface Province {
+  id: string;
+  name: string;
+  nameNp: string;
+  _count?: { districts: number };
+}
+
+export interface District {
+  id: string;
+  name: string;
+  nameNp: string;
+  provinceId: string;
+  province?: Province;
+  _count?: { constituencies: number };
+}
+
 export interface Constituency {
   id: string;
   name: string;
   nameNp: string;
   province?: string;
+  districtId?: string;
+  district?: { id: string; name: string; provinceId: string; province?: { id: string; name: string } };
   imageUrl?: string;
   description?: string;
   _count?: { services: number; reports: number };
@@ -23,6 +41,7 @@ export interface Service {
 
 export interface Report {
   id: string;
+  constituencyId?: string;
   serviceTimeMinutes: number;
   rating: number;
   comment?: string;
@@ -36,7 +55,7 @@ export interface Report {
 export interface ConstituencyFormData {
   name: string;
   nameNp: string;
-  province: string;
+  districtId: string;
   imageUrl: string;
   description: string;
 }

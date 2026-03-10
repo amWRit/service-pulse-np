@@ -36,11 +36,11 @@ export async function PUT(
 
   const { id } = await params;
   const body = await req.json();
-  const { name, nameNp, imageUrl, description, province } = body;
+  const { name, nameNp, imageUrl, description, districtId } = body;
 
   const constituency = await prisma.constituency.update({
     where: { id },
-    data: { name, nameNp, imageUrl, description, province },
+    data: { name, nameNp, imageUrl, description, districtId: districtId || null },
   });
 
   return NextResponse.json(constituency);
