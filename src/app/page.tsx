@@ -169,7 +169,7 @@ export default function HomePage() {
       )}
 
       {/* Floating report button */}
-      {session && (
+      {true && (
         <button
           onClick={() => setModalOpen(true)}
           className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold px-5 py-3.5 rounded-full shadow-lg transition-all"
