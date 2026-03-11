@@ -66,15 +66,15 @@ export default function ReportList({ reports, constituencies, provinces, distric
         {filtered.map((r) => (
           <div
             key={r.id}
-            className={`bg-white rounded-xl border p-4 ${r.isHidden ? "opacity-50" : ""}`}
+            className={`bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 ${r.isHidden ? "opacity-50" : ""}`}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="font-semibold text-gray-900 text-sm">
+                <p className="font-semibold text-gray-900 dark:text-white text-sm">
                   {r.publicService?.name} · ⭐{r.rating} · {r.serviceTimeMinutes}min
                 </p>
                 {r.comment && (
-                  <p className="text-gray-600 text-sm mt-0.5">"{r.comment}"</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-0.5">"{r.comment}"</p>
                 )}
                 <p className="text-xs text-gray-400 mt-1">
                   {r.user?.name ?? "Anonymous"} · {new Date(r.createdAt).toLocaleDateString()}

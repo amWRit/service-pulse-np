@@ -46,21 +46,21 @@ export default function ConstituenciesPage() {
 
         {/* Stats */}
         <div className="flex gap-3 mb-6">
-          <div className="flex-1 bg-orange-50 rounded-2xl py-3 text-center">
+          <div className="flex-1 bg-orange-50 dark:bg-orange-950/40 rounded-2xl py-3 text-center">
             <p className="text-2xl font-extrabold text-orange-600">{constituencies.length}</p>
-            <p className="text-xs text-gray-600">{t("nav.constituencies")}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300">{t("nav.constituencies")}</p>
           </div>
-          <div className="flex-1 bg-orange-50 rounded-2xl py-3 text-center">
+          <div className="flex-1 bg-orange-50 dark:bg-orange-950/40 rounded-2xl py-3 text-center">
             <p className="text-2xl font-extrabold text-orange-600">
               {constituencies.reduce((sum, c) => sum + c._count.services, 0)}
             </p>
-            <p className="text-xs text-gray-600">{t("nav.services")}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300">{t("nav.services")}</p>
           </div>
-          <div className="flex-1 bg-orange-50 rounded-2xl py-3 text-center">
+          <div className="flex-1 bg-orange-50 dark:bg-orange-950/40 rounded-2xl py-3 text-center">
             <p className="text-2xl font-extrabold text-orange-600">
               {constituencies.reduce((sum, c) => sum + c._count.reports, 0)}
             </p>
-            <p className="text-xs text-gray-600">{t("home.totalReports")}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300">{t("home.totalReports")}</p>
           </div>
         </div>
 
@@ -71,7 +71,7 @@ export default function ConstituenciesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("home.searchPlaceholder")}
-            className="w-full pl-12 pr-4 py-3 rounded-2xl border shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 text-base"
+            className="w-full pl-12 pr-4 py-3 rounded-2xl border dark:border-gray-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 text-base bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
           />
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function ConstituenciesPage() {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl h-52 animate-pulse border" />
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl h-52 animate-pulse border dark:border-gray-700" />
           ))}
         </div>
       ) : filtered.length === 0 ? (

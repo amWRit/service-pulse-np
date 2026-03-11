@@ -18,10 +18,10 @@ export default function ProvinceList({ provinces, onEdit, onDelete }: ProvinceLi
       {provinces.map((p) => (
         <div
           key={p.id}
-          className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4"
+          className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between gap-4"
         >
           <div>
-            <p className="font-semibold text-gray-900">{locale === "np" ? p.nameNp : p.name}</p>
+            <p className="font-semibold text-gray-900 dark:text-white">{locale === "np" ? p.nameNp : p.name}</p>
             <p className="text-xs text-gray-500">{p._count?.districts ?? 0} {t("admin.districts")}</p>
           </div>
           <div className="flex gap-1">

@@ -39,40 +39,40 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">📡</div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Service Pulse</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">Service Pulse</h1>
           <p className="text-gray-500 mt-1">{t("auth.register")}</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border dark:border-gray-700 p-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Name</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1.5">Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full border rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400 text-base"
+                className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 text-base dark:placeholder-gray-400"
                 placeholder="Ram Bahadur"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t("auth.email")}</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1.5">{t("auth.email")}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400 text-base"
+                className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 text-base dark:placeholder-gray-400"
                 placeholder="you@example.com"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t("auth.password")}</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1.5">{t("auth.password")}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400 text-base"
+                className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 text-base dark:placeholder-gray-400"
                 placeholder="Min. 8 characters"
                 minLength={8}
                 required

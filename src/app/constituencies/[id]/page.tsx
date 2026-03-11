@@ -59,9 +59,9 @@ export default function ConstituencyPage() {
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="h-48 bg-gray-200 rounded-2xl animate-pulse mb-6" />
+        <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse mb-6" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-gray-200 rounded-2xl animate-pulse" />)}
+          {[...Array(6)].map((_, i) => <div key={i} className="h-48 bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse" />)}
         </div>
       </div>
     );
@@ -111,7 +111,7 @@ export default function ConstituencyPage() {
             className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
               filter === type
                 ? "bg-orange-500 text-white border-orange-500"
-                : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-orange-300"
             }`}
           >
             {type === "all" ? "All" : t(`service.type.${type}`)}
@@ -120,8 +120,8 @@ export default function ConstituencyPage() {
       </div>
 
       {/* Services Grid */}
-      <h2 className="text-lg font-bold text-gray-800 mb-4">
-        {filtered.length} services
+      <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+        {filtered.length} {t("nav.services")}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((svc) => (

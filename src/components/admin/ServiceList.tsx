@@ -66,10 +66,10 @@ export default function ServiceList({ services, constituencies, provinces, distr
         {filtered.map((s) => (
           <div
             key={s.id}
-            className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4"
+            className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between gap-4"
           >
             <div>
-              <p className="font-semibold text-gray-900">
+              <p className="font-semibold text-gray-900 dark:text-white">
                 {locale === "np" ? s.nameNp : s.name}
               </p>
               <p className="text-xs text-gray-500">

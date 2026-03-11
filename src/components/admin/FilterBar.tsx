@@ -39,7 +39,7 @@ export default function FilterBar({
       <select
         value={selectedProvinceId}
         onChange={(e) => onProvinceChange(e.target.value)}
-        className="border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+        className="border dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white dark:bg-gray-800 dark:text-gray-200"
       >
         <option value="">{t("admin.allProvinces")}</option>
         {provinces.map((p) => (
@@ -49,7 +49,7 @@ export default function FilterBar({
       <select
         value={selectedDistrictId}
         onChange={(e) => onDistrictChange(e.target.value)}
-        className="border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+        className="border dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white dark:bg-gray-800 dark:text-gray-200"
       >
         <option value="">{t("admin.allDistricts")}</option>
         {filteredDistricts.map((d) => (
@@ -60,7 +60,7 @@ export default function FilterBar({
         <select
           value={selectedConstituencyId ?? ""}
           onChange={(e) => onConstituencyChange(e.target.value)}
-          className="border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+          className="border dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white dark:bg-gray-800 dark:text-gray-200"
         >
           <option value="">{t("admin.allConstituencies")}</option>
           {constituencies.map((c) => (

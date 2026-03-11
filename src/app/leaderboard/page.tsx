@@ -51,7 +51,7 @@ export default function LeaderboardPage() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
         <div className="text-5xl mb-3">🏆</div>
-        <h1 className="text-3xl font-extrabold text-gray-900">{t("leaderboard.title")}</h1>
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{t("leaderboard.title")}</h1>
         <p className="text-gray-500 mt-1 text-sm">Based on real citizen reports</p>
       </div>
 
@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
             className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full font-semibold text-sm transition-all border ${
               active === tab
                 ? "bg-orange-500 text-white border-orange-500 shadow-md scale-105"
-                : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-orange-300"
             }`}
           >
             <span>{TAB_EMOJI[tab]}</span>
@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
       {loading ? (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
+            <div key={i} className="h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : entries.length === 0 ? (
@@ -91,21 +91,21 @@ export default function LeaderboardPage() {
             <Link
               key={entry.id}
               href={`/services/${entry.id}`}
-              className="flex items-center gap-4 bg-white rounded-2xl border p-4 shadow-sm hover:shadow-md hover:border-orange-300 transition-all"
+              className="flex items-center gap-4 bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500 transition-all"
             >
               {/* Rank */}
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-lg flex-shrink-0 ${
                 index === 0 ? "bg-yellow-400 text-white" :
-                index === 1 ? "bg-gray-300 text-gray-700" :
+                index === 1 ? "bg-gray-300 dark:bg-gray-500 text-gray-700 dark:text-white" :
                 index === 2 ? "bg-orange-300 text-white" :
-                "bg-gray-100 text-gray-500"
+                "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300"
               }`}>
                 {index + 1}
               </div>
 
               {/* Name */}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-gray-900 truncate">
+                <p className="font-bold text-gray-900 dark:text-white truncate">
                   {locale === "np" ? entry.nameNp : entry.name}
                 </p>
                 <p className="text-xs text-gray-500 truncate">

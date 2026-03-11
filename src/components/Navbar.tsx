@@ -12,7 +12,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white border-b shadow-sm sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-900 border-b dark:border-gray-700 shadow-sm sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-lg text-orange-600">
@@ -23,19 +23,19 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+          <Link href="/" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
             {t("nav.home")}
           </Link>
-          <Link href="/constituencies" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+          <Link href="/constituencies" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
             {t("nav.constituencies")}
           </Link>
           {session?.user.role === "admin" && (
-            <Link href="/admin" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+            <Link href="/admin" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
               {t("nav.admin")}
             </Link>
           )}
           {session && (
-            <Link href="/badges" className="text-gray-700 hover:text-orange-600 font-medium transition-colors">
+            <Link href="/badges" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
               {t("nav.myBadges")}
             </Link>
           )}
@@ -50,7 +50,7 @@ export default function Navbar() {
 
           {session ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">{session.user.name}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">{session.user.name}</span>
               <button
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="bg-red-100 hover:bg-red-200 text-red-700 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors"
@@ -70,7 +70,7 @@ export default function Navbar() {
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+          className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           <span className="text-xl">{menuOpen ? "✕" : "☰"}</span>
@@ -79,14 +79,14 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t px-4 py-3 flex flex-col gap-3">
-          <Link href="/" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.home")}</Link>
-          <Link href="/constituencies" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.constituencies")}</Link>
+        <div className="md:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-700 px-4 py-3 flex flex-col gap-3">
+          <Link href="/" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.home")}</Link>
+          <Link href="/constituencies" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.constituencies")}</Link>
           {session?.user.role === "admin" && (
-            <Link href="/admin" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.admin")}</Link>
+            <Link href="/admin" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.admin")}</Link>
           )}
           {session && (
-            <Link href="/badges" onClick={() => setMenuOpen(false)} className="text-gray-700 font-medium py-2">{t("nav.myBadges")}</Link>
+            <Link href="/badges" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.myBadges")}</Link>
           )}
           <button
             onClick={() => { setLocale(locale === "en" ? "np" : "en"); setMenuOpen(false); }}

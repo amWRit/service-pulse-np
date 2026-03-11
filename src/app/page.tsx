@@ -77,7 +77,7 @@ export default function HomePage() {
       <div className="flex items-center gap-2 mb-5 sm:justify-center sm:flex-col sm:gap-1">
         <span className="text-2xl sm:text-4xl">🏆</span>
         <div>
-          <h2 className="text-lg sm:text-2xl font-extrabold text-gray-900 sm:text-center">{t("leaderboard.title")}</h2>
+          <h2 className="text-lg sm:text-2xl font-extrabold text-gray-900 dark:text-white sm:text-center">{t("leaderboard.title")}</h2>
           <p className="hidden sm:block text-sm text-gray-400 text-center">{t("leaderboard.subtitle")}</p>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function HomePage() {
             className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-full font-semibold text-sm transition-all border ${
               active === tab
                 ? "bg-orange-500 text-white border-orange-500 shadow-md scale-105"
-                : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500"
             }`}
           >
             {(() => { const Icon = TAB_ICON[tab]; return <Icon className="w-4 h-4 flex-shrink-0" />; })()}
@@ -110,7 +110,7 @@ export default function HomePage() {
       {loading ? (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
+            <div key={i} className="h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : entries.length === 0 ? (
@@ -124,21 +124,21 @@ export default function HomePage() {
             <Link
               key={entry.id}
               href={`/services/${entry.id}`}
-              className="flex items-center gap-3 bg-white rounded-2xl border p-4 shadow-sm hover:shadow-md hover:border-orange-300 transition-all"
+              className="flex items-center gap-3 bg-white dark:bg-gray-800 rounded-2xl border dark:border-gray-700 p-4 shadow-sm hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500 transition-all"
             >
               {/* Rank */}
               <div className={`w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-base flex-shrink-0 ${
                 index === 0 ? "bg-yellow-400 text-white" :
-                index === 1 ? "bg-gray-300 text-gray-700" :
+                index === 1 ? "bg-gray-300 dark:bg-gray-500 text-gray-700 dark:text-white" :
                 index === 2 ? "bg-orange-300 text-white" :
-                "bg-gray-100 text-gray-500"
+                "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300"
               }`}>
                 {index + 1}
               </div>
 
               {/* Name */}
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-gray-900 leading-tight">
+                <p className="font-bold text-gray-900 dark:text-white leading-tight">
                   {locale === "np" ? entry.nameNp : entry.name}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">

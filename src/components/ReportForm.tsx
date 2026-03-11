@@ -70,12 +70,12 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border p-6 space-y-5">
-      <h3 className="text-lg font-bold text-gray-900">{t("report.title")}</h3>
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border dark:border-gray-700 p-6 space-y-5">
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("report.title")}</h3>
 
       {/* Service time */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           {t("report.serviceTime")}
         </label>
         {/* Quick presets */}
@@ -88,7 +88,7 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
               className={`px-3 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
                 serviceTime === String(preset)
                   ? "bg-orange-500 text-white border-orange-500"
-                  : "bg-white text-gray-700 border-gray-200 hover:border-orange-300"
+                  : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-600 hover:border-orange-300"
               }`}
             >
               {preset} {t("home.minutes")}
@@ -102,14 +102,14 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
           value={serviceTime}
           onChange={(e) => setServiceTime(e.target.value)}
           placeholder="Custom minutes..."
-          className="w-full border rounded-xl px-4 py-3 text-gray-800 text-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 dark:placeholder-gray-400"
           required
         />
       </div>
 
       {/* Rating */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           {t("report.rating")}
         </label>
         <StarRating rating={rating} interactive onRate={setRating} size="lg" />
@@ -117,7 +117,7 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
 
       {/* Comment */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           {t("report.comment")}
         </label>
         <textarea
@@ -125,7 +125,7 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
           onChange={(e) => setComment(e.target.value)}
           placeholder={t("report.commentPlaceholder")}
           rows={3}
-          className="w-full border rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+          className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none dark:placeholder-gray-400"
         />
       </div>
 
@@ -144,7 +144,7 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
             }`}
           />
         </button>
-        <label className="text-sm text-gray-700">{t("report.anonymous")}</label>
+        <label className="text-sm text-gray-700 dark:text-gray-200">{t("report.anonymous")}</label>
       </div>
 
       {error && <p className="text-red-600 text-sm">{error}</p>}
