@@ -59,7 +59,8 @@
     "whichServiceQuestion": "Which service did you use?",
     "shareExperience": "Share your experience",
     "noResults": "No constituencies found",
-    "noServices": "No services found"
+    "noServices": "No services found",
+    "captchaLabel": "Please solve:"
   },
   "leaderboard": {
     "title": "Service Leaderboard",

@@ -19,6 +19,9 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [captchaRequired, setCaptchaRequired] = useState(false);
+  const [captchaQuestion, setCaptchaQuestion] = useState("");
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
 
   // Quick time presets in minutes
   const timePresets = [5, 15, 30, 45, 60, 90, 120];
@@ -41,15 +44,38 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
           rating,
           comment: comment || undefined,
           anonymous,
+          captchaToken: captchaRequired ? captchaAnswer : undefined,
         }),
       });
 
-      if (!res.ok) throw new Error("Submit failed");
+      if (!res.ok) {
+        let errorMsg = t("report.error");
+        try {
+          const data = await res.json();
+          if (data?.captchaRequired && data?.captchaQuestion) {
+            setCaptchaRequired(true);
+            setCaptchaQuestion(data.captchaQuestion);
+            setCaptchaAnswer("");
+            setError(data.error || t("report.error"));
+            return;
+          } else if (data?.captchaRequired) {
+            setCaptchaRequired(true);
+            setError(data.error || t("report.error"));
+            return;
+          }
+          if (data?.error) errorMsg = data.error;
+        } catch {}
+        setError(errorMsg);
+        return;
+      }
 
       setSuccess(true);
       setServiceTime("");
       setRating(0);
       setComment("");
+      setCaptchaRequired(false);
+      setCaptchaQuestion("");
+      setCaptchaAnswer("");
       onSuccess?.();
 
       setTimeout(() => setSuccess(false), 3000);
@@ -129,6 +155,7 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
         />
       </div>
 
+
       {/* Anonymous */}
       <div className="flex items-center gap-3">
         <button
@@ -146,6 +173,23 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
         </button>
         <label className="text-sm text-gray-700 dark:text-gray-200">{t("report.anonymous")}</label>
       </div>
+
+      {/* Math Captcha */}
+      {captchaRequired && (
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            {t("report.captchaLabel")} <span className="font-mono">{captchaQuestion}</span>
+          </label>
+          <input
+            type="text"
+            value={captchaAnswer}
+            onChange={e => setCaptchaAnswer(e.target.value)}
+            placeholder={captchaQuestion}
+            className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 dark:placeholder-gray-400"
+            required
+          />
+        </div>
+      )}
 
       {error && <p className="text-red-600 text-sm">{error}</p>}
 
