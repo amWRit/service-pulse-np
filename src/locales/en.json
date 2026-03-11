@@ -59,7 +59,36 @@
     "whichServiceQuestion": "Which service did you use?",
     "shareExperience": "Share your experience",
     "noResults": "No constituencies found",
-    "noServices": "No services found"
+    "noServices": "No services found",
+    "captchaLabel": "Please solve:",
+    "updated": "Report updated! Thank you!",
+    "editTitle": "Edit Your Report",
+    "alreadyReportedNote": "You already have a report for this service.",
+    "editAllowed": "You can update your report below.",
+    "editCooldownNote": "You can update again in {hours} hour(s).",
+    "cancelEdit": "Cancel",
+    "updateSubmit": "Update Report",
+    "updateLocked": "Update available in {hours}h",
+    "errorLoginRequired": "You must be logged in to edit a report.",
+    "errorNotFound": "No report found to update.",
+    "errorEditCooldown": "Please wait before updating your report again.",
+    "errorGlobalLimitUser": "You have reached the maximum number of reports allowed per day. Please try again tomorrow.",
+    "errorGlobalLimitIp": "This network has reached the daily report limit. Please try again tomorrow or log in for more access.",
+    "errorCaptchaRequired": "Captcha required for additional reports from this network today.",
+    "errorCaptchaWrong": "Incorrect captcha answer. Please try again.",
+    "errorServiceLimitUser": "You have already submitted a report for this service today. Please try again tomorrow.",
+    "errorServiceLimitIp": "Too many reports for this service from this network today. Please try again tomorrow or log in for more access.",
+    "errorMissingFields": "Please fill in all required fields.",
+    "errorInvalidRating": "Rating must be between 1 and 5."
+  },
+  "challenge": {
+    "required": "Verification required before submitting a report.",
+    "errorNotFound": "Verification session not found. Please refresh and try again.",
+    "errorExpired": "Verification code expired. Please click Refresh and try again.",
+    "errorUsed": "This code has already been used. Please click Refresh for a new one.",
+    "errorWrongCode": "Incorrect code. Please check and try again.",
+    "errorRateLimit": "Too many requests. Please wait a moment.",
+    "errorMissingFields": "Challenge ID and code are required."
   },
   "leaderboard": {
     "title": "Service Leaderboard",
@@ -124,5 +153,24 @@
     "haveAccount": "Already have an account?",
     "firstName": "First Name",
     "lastName": "Last Name"
+  },
+  "anonGate": {
+    "heading": "One quick step",
+    "subtitle": "Open the link to get your 6-digit code, then enter it below.",
+    "qrAlt": "Scan to get code",
+    "openLink": "Open to get your code",
+    "codeExpired": "Code expired",
+    "validFor": "Valid for",
+    "seconds": "s",
+    "refresh": "Refresh",
+    "placeholder": "6-digit code",
+    "verifying": "Verifying…",
+    "verify": "Verify & Continue →",
+    "haveAccount": "Have an account?",
+    "signIn": "Sign in",
+    "skipStep": "to skip this step.",
+    "errorCreate": "Failed to create challenge.",
+    "errorVerify": "Invalid code.",
+    "errorNetwork": "Network error. Please try again."
   }
 }

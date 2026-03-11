@@ -141,6 +141,10 @@ model Report {
   constituency       Constituency  @relation(fields: [constituencyId], references: [id])
   user               User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @default(now()) @updatedAt
+
+  // One active report per authenticated user per service (nulls are not considered equal, so anonymous reports are unrestricted)
+  @@unique([userId, publicServiceId])
 }
 
 model Badge {

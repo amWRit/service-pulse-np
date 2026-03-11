@@ -6,6 +6,7 @@ import Link from "next/link";
 import StarRating from "@/components/StarRating";
 import { useSession } from "next-auth/react";
 import ReportModal from "@/components/ReportModal";
+import AnonGateModal from "@/components/AnonGateModal";
 import { Plus, Zap, Turtle, ThumbsUp, ThumbsDown, Snail } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -50,6 +51,22 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats>({ constituencies: 0, services: 0, reports: 0 });
   const [modalOpen, setModalOpen] = useState(false);
+  const [gateOpen, setGateOpen] = useState(false);
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
+
+  const handleReportClick = () => {
+    if (session) {
+      setModalOpen(true);
+    } else {
+      setGateOpen(true);
+    }
+  };
+
+  const handleGateVerified = (token: string) => {
+    setChallengeToken(token);
+    setGateOpen(false);
+    setModalOpen(true);
+  };
 
   useEffect(() => {
     fetch("/api/leaderboard")
@@ -171,7 +188,7 @@ export default function HomePage() {
       {/* Floating report button */}
       {true && (
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={handleReportClick}
           className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold px-5 py-3.5 rounded-full shadow-lg transition-all"
         >
           <Plus className="w-5 h-5" />
@@ -179,8 +196,16 @@ export default function HomePage() {
         </button>
       )}
 
+      {/* Gate modal for anonymous users */}
+      {gateOpen && <AnonGateModal onVerified={handleGateVerified} onClose={() => setGateOpen(false)} />}
+
       {/* Report modal */}
-      {modalOpen && <ReportModal onClose={() => setModalOpen(false)} />}
+      {modalOpen && (
+        <ReportModal
+          challengeToken={challengeToken ?? undefined}
+          onClose={() => { setModalOpen(false); setChallengeToken(null); }}
+        />
+      )}
     </div>
   );
 }
