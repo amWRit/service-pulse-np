@@ -45,6 +45,7 @@
   "report": {
     "title": "Submit Report",
     "serviceTime": "How long did service take? (minutes)",
+    "customMinutes": "Custom minutes...",
     "rating": "Rate the service",
     "comment": "Add a comment (optional)",
     "commentPlaceholder": "Share your experience...",
@@ -52,7 +53,13 @@
     "submitting": "Submitting...",
     "success": "Report submitted! Thank you!",
     "error": "Something went wrong. Please try again.",
-    "anonymous": "Submit anonymously"
+    "anonymous": "Submit anonymously",
+    "selectConstituency": "Select Constituency",
+    "whereQuestion": "Where did you use the service?",
+    "whichServiceQuestion": "Which service did you use?",
+    "shareExperience": "Share your experience",
+    "noResults": "No constituencies found",
+    "noServices": "No services found"
   },
   "leaderboard": {
     "title": "Service Leaderboard",
@@ -96,14 +103,6 @@
     "servicePulse": "Service Pulse",
     "switchToLight": "Switch to light mode",
     "switchToDark": "Switch to dark mode"
-  },
-  "report": {
-    "selectConstituency": "Select Constituency",
-    "whereQuestion": "Where did you use the service?",
-    "whichServiceQuestion": "Which service did you use?",
-    "shareExperience": "Share your experience",
-    "noResults": "No constituencies found",
-    "noServices": "No services found"
   },
   "badges": {
     "title": "Your Badges",

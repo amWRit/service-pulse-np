@@ -101,7 +101,7 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
           max="480"
           value={serviceTime}
           onChange={(e) => setServiceTime(e.target.value)}
-          placeholder="Custom minutes..."
+          placeholder={t("report.customMinutes")}
           className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 dark:placeholder-gray-400"
           required
         />
