@@ -38,9 +38,10 @@ interface Service {
 
 interface ReportModalProps {
   onClose: () => void;
+  challengeToken?: string;
 }
 
-export default function ReportModal({ onClose }: ReportModalProps) {
+export default function ReportModal({ onClose, challengeToken }: ReportModalProps) {
   const { t, locale } = useI18n();
 
   const [step, setStep] = useState<"constituency" | "service" | "report">("constituency");
@@ -306,6 +307,7 @@ useEffect(() => {
               <ReportForm
                 serviceId={selectedService.id}
                 constituencyId={selectedService.constituencyId}
+                challengeToken={challengeToken}
                 onSuccess={onClose}
               />
             </div>

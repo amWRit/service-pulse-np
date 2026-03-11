@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { checkAndAwardBadges } from "@/lib/utils";
-import { reportIpSoftRateLimiter, reportIpHardRateLimiter, reportUserGlobalLimiter, reportIpGlobalLimiter } from "@/lib/rateLimiter";
-import { generateMathCaptcha, validateMathCaptcha } from "@/lib/mathCaptcha";
+import { reportIpHardRateLimiter, reportUserGlobalLimiter, reportIpGlobalLimiter } from "@/lib/rateLimiter";
+import { validateChallengeToken } from "@/lib/challengeStore";
 
 const EDIT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   const session = await auth();
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const body = await req.json();
-  const { publicServiceId, constituencyId, serviceTimeMinutes, rating, comment, anonymous, captchaToken } = body;
+  const { publicServiceId, constituencyId, serviceTimeMinutes, rating, comment, anonymous, challengeToken } = body;
 
   if (!publicServiceId || !constituencyId || !serviceTimeMinutes || !rating) {
     return NextResponse.json({ error: "Missing required fields", errorCode: "report.errorMissingFields" }, { status: 400 });
@@ -93,6 +93,16 @@ export async function POST(req: Request) {
   }
 
   // ── Anonymous path ──────────────────────────────────────────────────────────
+
+  // Challenge token required for all anonymous submissions
+  if (!challengeToken || !validateChallengeToken(challengeToken)) {
+    return NextResponse.json({
+      error: "Verification required before submitting a report.",
+      errorCode: "challenge.required",
+      challengeRequired: true,
+    }, { status: 401 });
+  }
+
   try {
     await reportIpGlobalLimiter.consume(ip);
   } catch {
@@ -104,29 +114,7 @@ export async function POST(req: Request) {
 
   const ipServiceKey = `${ip}:${publicServiceId}`;
   try {
-    try {
-      await reportIpSoftRateLimiter.consume(ipServiceKey);
-    } catch {
-      if (!captchaToken) {
-        const captcha = generateMathCaptcha(ipServiceKey);
-        return NextResponse.json({
-          error: "Captcha required for additional reports from this network today.",
-          errorCode: "report.errorCaptchaRequired",
-          captchaRequired: true,
-          captchaQuestion: captcha.question,
-        }, { status: 429 });
-      }
-      if (!validateMathCaptcha(ipServiceKey, captchaToken)) {
-        const captcha = generateMathCaptcha(ipServiceKey);
-        return NextResponse.json({
-          error: "Incorrect captcha answer. Please try again.",
-          errorCode: "report.errorCaptchaWrong",
-          captchaRequired: true,
-          captchaQuestion: captcha.question,
-        }, { status: 429 });
-      }
-      await reportIpHardRateLimiter.consume(ipServiceKey);
-    }
+    await reportIpHardRateLimiter.consume(ipServiceKey);
   } catch {
     return NextResponse.json({
       error: "Too many reports for this service from this network today. Please try again tomorrow or log in for more access.",

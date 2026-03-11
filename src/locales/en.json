@@ -81,6 +81,15 @@
     "errorMissingFields": "Please fill in all required fields.",
     "errorInvalidRating": "Rating must be between 1 and 5."
   },
+  "challenge": {
+    "required": "Verification required before submitting a report.",
+    "errorNotFound": "Verification session not found. Please refresh and try again.",
+    "errorExpired": "Verification code expired. Please click Refresh and try again.",
+    "errorUsed": "This code has already been used. Please click Refresh for a new one.",
+    "errorWrongCode": "Incorrect code. Please check and try again.",
+    "errorRateLimit": "Too many requests. Please wait a moment.",
+    "errorMissingFields": "Challenge ID and code are required."
+  },
   "leaderboard": {
     "title": "Service Leaderboard",
     "subtitle": "Based on real citizen reports",
@@ -144,5 +153,24 @@
     "haveAccount": "Already have an account?",
     "firstName": "First Name",
     "lastName": "Last Name"
+  },
+  "anonGate": {
+    "heading": "One quick step",
+    "subtitle": "Open the link to get your 6-digit code, then enter it below.",
+    "qrAlt": "Scan to get code",
+    "openLink": "Open to get your code",
+    "codeExpired": "Code expired",
+    "validFor": "Valid for",
+    "seconds": "s",
+    "refresh": "Refresh",
+    "placeholder": "6-digit code",
+    "verifying": "Verifying…",
+    "verify": "Verify & Continue →",
+    "haveAccount": "Have an account?",
+    "signIn": "Sign in",
+    "skipStep": "to skip this step.",
+    "errorCreate": "Failed to create challenge.",
+    "errorVerify": "Invalid code.",
+    "errorNetwork": "Network error. Please try again."
   }
 }

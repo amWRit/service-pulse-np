@@ -7,6 +7,7 @@ import StarRating from "./StarRating";
 interface ReportFormProps {
   serviceId: string;
   constituencyId: string;
+  challengeToken?: string;
   onSuccess?: () => void;
 }
 
@@ -18,7 +19,7 @@ interface ExistingReport {
   updatedAt: string;
 }
 
-export default function ReportForm({ serviceId, constituencyId, onSuccess }: ReportFormProps) {
+export default function ReportForm({ serviceId, constituencyId, challengeToken, onSuccess }: ReportFormProps) {
   const { t } = useI18n();
   const [serviceTime, setServiceTime] = useState("");
   const [rating, setRating] = useState(0);
@@ -28,9 +29,6 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
   const [success, setSuccess] = useState(false);
   const [wasUpdated, setWasUpdated] = useState(false);
   const [error, setError] = useState("");
-  const [captchaRequired, setCaptchaRequired] = useState(false);
-  const [captchaQuestion, setCaptchaQuestion] = useState("");
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
 
   // Edit mode: set when the server says the user already reported this service
   const [editMode, setEditMode] = useState(false);
@@ -62,7 +60,7 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
       const method = editMode ? "PATCH" : "POST";
       const payload = editMode
         ? { publicServiceId: serviceId, serviceTimeMinutes: parseInt(serviceTime), rating, comment: comment || undefined }
-        : { publicServiceId: serviceId, constituencyId, serviceTimeMinutes: parseInt(serviceTime), rating, comment: comment || undefined, anonymous, captchaToken: captchaRequired ? captchaAnswer : undefined };
+        : { publicServiceId: serviceId, constituencyId, serviceTimeMinutes: parseInt(serviceTime), rating, comment: comment || undefined, anonymous, challengeToken: challengeToken ?? undefined };
 
       const res = await fetch("/api/reports", {
         method,
@@ -78,13 +76,6 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
           enterEditMode(data);
           return;
         }
-        if (data?.captchaRequired) {
-          setCaptchaRequired(true);
-          if (data.captchaQuestion) setCaptchaQuestion(data.captchaQuestion);
-          setCaptchaAnswer("");
-          setError(data.errorCode ? t(data.errorCode) : data.error || t("report.error"));
-          return;
-        }
         setError(data?.errorCode ? t(data.errorCode) : data?.error || t("report.error"));
         return;
       }
@@ -94,9 +85,6 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
       setServiceTime("");
       setRating(0);
       setComment("");
-      setCaptchaRequired(false);
-      setCaptchaQuestion("");
-      setCaptchaAnswer("");
       setEditMode(false);
       setExistingReport(null);
       onSuccess?.();
@@ -220,23 +208,6 @@ export default function ReportForm({ serviceId, constituencyId, onSuccess }: Rep
             />
           </button>
           <label className="text-sm text-gray-700 dark:text-gray-200">{t("report.anonymous")}</label>
-        </div>
-      )}
-
-      {/* Math Captcha */}
-      {captchaRequired && (
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-            {t("report.captchaLabel")} <span className="font-mono">{captchaQuestion}</span>
-          </label>
-          <input
-            type="text"
-            value={captchaAnswer}
-            onChange={e => setCaptchaAnswer(e.target.value)}
-            placeholder={captchaQuestion}
-            className="w-full border dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-700 text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 dark:placeholder-gray-400"
-            required
-          />
         </div>
       )}
 
