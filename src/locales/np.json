@@ -92,9 +92,18 @@
     "allProvinces": "सबै प्रदेशहरू",
     "allDistricts": "सबै जिल्लाहरू",
     "allConstituencies": "सबै निर्वाचन क्षेत्रहरू",
+    "allServices": "सबै सेवा प्रकारहरू",
     "servicePulse": "सेवा सूचक",
     "switchToLight": "उज्यालो मोडमा जानुहोस्",
     "switchToDark": "अँध्यारो मोडमा जानुहोस्"
+  },
+  "report": {
+    "selectConstituency": "निर्वाचन क्षेत्र छान्नुहोस्",
+    "whereQuestion": "तपाईंले कहाँ सेवा प्रयोग गर्नुभयो?",
+    "whichServiceQuestion": "कुन सेवा प्रयोग गर्नुभयो?",
+    "shareExperience": "आफ्नो अनुभव साझा गर्नुहोस्",
+    "noResults": "कुनै निर्वाचन क्षेत्र फेला परेन",
+    "noServices": "कुनै सेवा फेला परेन"
   },
   "badges": {
     "title": "तपाईंका ब्याजहरू",
