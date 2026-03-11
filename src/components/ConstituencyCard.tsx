@@ -24,7 +24,7 @@ export default function ConstituencyCard({
   return (
     <Link
       href={`/constituencies/${id}`}
-      className="block bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-lg hover:border-orange-300 transition-all group"
+      className="block bg-white dark:bg-gray-800 rounded-2xl shadow-sm border dark:border-gray-700 overflow-hidden hover:shadow-lg hover:border-orange-300 transition-all group"
     >
       <div className="h-32 bg-gradient-to-br from-orange-400 to-red-500 relative overflow-hidden">
         <Image
@@ -44,10 +44,10 @@ export default function ConstituencyCard({
       </div>
 
       <div className="p-4">
-        <h3 className="font-bold text-gray-900 text-lg group-hover:text-orange-600 transition-colors">
+        <h3 className="font-bold text-gray-900 dark:text-white text-lg group-hover:text-orange-600 transition-colors">
           {locale === "np" ? nameNp : name}
         </h3>
-        <div className="mt-2 flex gap-3 text-sm text-gray-500">
+        <div className="mt-2 flex gap-3 text-sm text-gray-500 dark:text-gray-400">
           <span>🏢 {serviceCount} {t("nav.services" as never)}</span>
           <span>📋 {reportCount} {t("service.reports" as never)}</span>
         </div>

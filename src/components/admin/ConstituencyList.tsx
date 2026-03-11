@@ -44,10 +44,10 @@ export default function ConstituencyList({ constituencies, provinces, districts,
         {filtered.map((c) => (
           <div
             key={c.id}
-            className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4"
+            className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between gap-4"
           >
             <div>
-              <p className="font-semibold text-gray-900">
+              <p className="font-semibold text-gray-900 dark:text-white">
                 {locale === "np" ? c.nameNp : c.name}
               </p>
               <p className="text-xs text-gray-500">

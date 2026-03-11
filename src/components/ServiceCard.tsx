@@ -39,12 +39,12 @@ export default function ServiceCard({
   return (
     <Link
       href={`/services/${id}`}
-      className="block bg-white rounded-2xl shadow-sm border hover:shadow-md hover:border-orange-300 transition-all p-4 group"
+      className="block bg-white dark:bg-gray-800 rounded-2xl shadow-sm border dark:border-gray-700 hover:shadow-md hover:border-orange-300 dark:hover:border-orange-500 transition-all p-4 group"
     >
       <div className="flex items-start gap-3">
         <div className="text-3xl flex-shrink-0">{icon}</div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-gray-900 truncate group-hover:text-orange-600 transition-colors">
+          <h3 className="font-bold text-gray-900 dark:text-white truncate group-hover:text-orange-600 transition-colors">
             {locale === "np" ? nameNp : name}
           </h3>
           {location && (
@@ -58,18 +58,18 @@ export default function ServiceCard({
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2 text-center">
-        <div className="bg-gray-50 rounded-xl p-2">
-          <p className="text-xs text-gray-500">{t("service.avgWait")}</p>
-          <p className="font-bold text-gray-800 text-sm">
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("service.avgWait")}</p>
+          <p className="font-bold text-gray-800 dark:text-gray-100 text-sm">
             {avgTime ? `${Math.round(avgTime)} ${t("home.minutes")}` : "—"}
           </p>
         </div>
-        <div className="bg-gray-50 rounded-xl p-2">
-          <p className="text-xs text-gray-500">{t("service.avgRating")}</p>
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t("service.avgRating")}</p>
           {avgRating ? (
             <StarRating rating={Math.round(avgRating)} size="sm" />
           ) : (
-            <p className="font-bold text-gray-800 text-sm">—</p>
+            <p className="font-bold text-gray-800 dark:text-gray-100 text-sm">—</p>
           )}
         </div>
       </div>

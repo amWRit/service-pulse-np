@@ -28,7 +28,7 @@ export default function DistrictList({ districts, provinces, onEdit, onDelete }:
         <button
           onClick={() => setProvinceId("")}
           className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-            !provinceId ? "bg-orange-500 text-white border-orange-500" : "text-gray-600 border-gray-300 hover:border-orange-400"
+              !provinceId ? "bg-orange-500 text-white border-orange-500" : "text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-orange-400"
           }`}
         >
           {t("admin.allProvinces")}
@@ -38,7 +38,7 @@ export default function DistrictList({ districts, provinces, onEdit, onDelete }:
             key={p.id}
             onClick={() => setProvinceId(p.id)}
             className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-              provinceId === p.id ? "bg-orange-500 text-white border-orange-500" : "text-gray-600 border-gray-300 hover:border-orange-400"
+              provinceId === p.id ? "bg-orange-500 text-white border-orange-500" : "text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-orange-400"
             }`}
           >
             {locale === "np" ? p.nameNp : p.name}
@@ -50,10 +50,10 @@ export default function DistrictList({ districts, provinces, onEdit, onDelete }:
         {filtered.map((d) => (
           <div
             key={d.id}
-            className="bg-white rounded-xl border p-4 flex items-center justify-between gap-4"
+            className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between gap-4"
           >
             <div>
-              <p className="font-semibold text-gray-900">{locale === "np" ? d.nameNp : d.name}</p>
+              <p className="font-semibold text-gray-900 dark:text-white">{locale === "np" ? d.nameNp : d.name}</p>
               <p className="text-xs text-gray-500">
                 {locale === "np" ? d.province?.nameNp : d.province?.name} · {d._count?.constituencies ?? 0} {t("nav.constituencies")}
               </p>

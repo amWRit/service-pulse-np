@@ -173,7 +173,7 @@ export default function AdminPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900">{t("admin.dashboard")} 🔒</h1>
+        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">{t("admin.dashboard")} 🔒</h1>
         {tab !== "reports" && (
           <button
             onClick={() => {
@@ -193,7 +193,7 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-1 mb-6 border-b">
+      <div className="flex flex-wrap gap-1 mb-6 border-b dark:border-gray-700">
         {([
           { key: "constituencies", label: t("admin.constituencies"), count: constituencies.length },
           { key: "services", label: t("admin.services"), count: services.length },
@@ -205,7 +205,7 @@ export default function AdminPage() {
             key={key}
             onClick={() => setTab(key)}
             className={`px-4 py-2 font-semibold text-sm border-b-2 transition-colors ${
-              tab === key ? "border-orange-500 text-orange-600" : "border-transparent text-gray-500 hover:text-gray-800"
+              tab === key ? "border-orange-500 text-orange-600" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
             }`}
           >
             {label} ({count})

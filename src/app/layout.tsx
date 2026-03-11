@@ -30,8 +30,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 min-h-screen`}>
+    <html lang="en" className="bg-gray-50 dark:bg-gray-900">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
         <SessionWrapper>
           <I18nProvider>
             <Navbar />
