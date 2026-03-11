@@ -92,7 +92,9 @@
     "allProvinces": "All Provinces",
     "allDistricts": "All Districts",
     "allConstituencies": "All Constituencies",
-    "servicePulse": "Service Pulse"
+    "servicePulse": "Service Pulse",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
   },
   "badges": {
     "title": "Your Badges",

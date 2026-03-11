@@ -92,7 +92,9 @@
     "allProvinces": "सबै प्रदेशहरू",
     "allDistricts": "सबै जिल्लाहरू",
     "allConstituencies": "सबै निर्वाचन क्षेत्रहरू",
-    "servicePulse": "सेवा सूचक"
+    "servicePulse": "सेवा सूचक",
+    "switchToLight": "उज्यालो मोडमा जानुहोस्",
+    "switchToDark": "अँध्यारो मोडमा जानुहोस्"
   },
   "badges": {
     "title": "तपाईंका ब्याजहरू",

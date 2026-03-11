@@ -3,13 +3,58 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useI18n } from "@/lib/i18n";
-import { useState } from "react";
-import { Activity } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Activity, Sun, Moon } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const { t, locale, setLocale } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
+
+  // Helper to apply theme
+  function applyTheme(theme: "light" | "dark" | "system") {
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else if (theme === "light") {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else {
+      // system
+      localStorage.removeItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (prefersDark) root.classList.add("dark");
+      else root.classList.remove("dark");
+    }
+  }
+
+  // Sync theme on mount and on system change
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem("theme") : null;
+    let initial: "light" | "dark" | "system" = "system";
+    if (saved === "light" || saved === "dark") initial = saved;
+    setTheme(initial);
+    applyTheme(initial);
+    if (initial === "system") {
+      const listener = (e: MediaQueryListEvent) => {
+        applyTheme("system");
+      };
+      const mql = window.matchMedia("(prefers-color-scheme: dark)");
+      mql.addEventListener("change", listener);
+      return () => mql.removeEventListener("change", listener);
+    }
+  }, []);
+
+  // Toggle theme
+  const toggleTheme = () => {
+    let next: "light" | "dark";
+    if (theme === "dark") next = "light";
+    else next = "dark";
+    setTheme(next);
+    applyTheme(next);
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-900 border-b dark:border-gray-700 shadow-sm sticky top-0 z-50">
@@ -39,6 +84,15 @@ export default function Navbar() {
               {t("nav.myBadges")}
             </Link>
           )}
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-full p-1.5 transition-colors"
+            title={theme === "dark" ? t("admin.switchToLight" as never) : t("admin.switchToDark" as never)}
+          >
+            {theme === "dark" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+          </button>
 
           {/* Language toggle */}
           <button
@@ -89,10 +143,11 @@ export default function Navbar() {
             <Link href="/badges" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.myBadges")}</Link>
           )}
           <button
-            onClick={() => { setLocale(locale === "en" ? "np" : "en"); setMenuOpen(false); }}
-            className="text-sm bg-orange-100 text-orange-700 rounded-full px-3 py-1.5 font-semibold w-fit"
+            onClick={toggleTheme}
+            className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-full p-1.5 transition-colors w-fit"
+            title={theme === "dark" ? t("admin.switchToLight" as never) : t("admin.switchToDark" as never)}
           >
-            {locale === "en" ? "नेपाली" : "English"}
+            {theme === "dark" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
           {session ? (
             <button
