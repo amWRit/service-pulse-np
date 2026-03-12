@@ -128,7 +128,7 @@ export default function ConstituenciesPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-gray-400 text-lg">
-          No constituencies found for selected filters.
+          {t("constituency.emptyFiltered")}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

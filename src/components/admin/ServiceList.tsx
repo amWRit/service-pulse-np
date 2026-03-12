@@ -95,7 +95,7 @@ export default function ServiceList({ services, constituencies, provinces, distr
           </div>
         ))}
         {filtered.length === 0 && (
-          <p className="text-center text-gray-400 py-8 text-sm">No services match the selected filters.</p>
+          <p className="text-center text-gray-400 py-8 text-sm">{t("admin.noServicesFiltered")}</p>
         )}
       </div>
     </div>

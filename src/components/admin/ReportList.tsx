@@ -105,7 +105,7 @@ export default function ReportList({ reports, constituencies, provinces, distric
           </div>
         ))}
         {filtered.length === 0 && (
-          <p className="text-center text-gray-400 py-8 text-sm">No reports match the selected filters.</p>
+          <p className="text-center text-gray-400 py-8 text-sm">{t("admin.noReportsFiltered")}</p>
         )}
       </div>
     </div>

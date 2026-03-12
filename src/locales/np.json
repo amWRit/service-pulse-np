@@ -144,6 +144,7 @@
   },
   "constituency": {
     "notFound": "निर्वाचन क्षेत्र फेला परेन",
+    "emptyFiltered": "छानिएका फिल्टरहरूमा मिल्ने कुनै निर्वाचन क्षेत्र फेला परेन।",
     "allTypes": "सबै",
     "tabs": {
       "insights": "इनसाइट्स",
@@ -237,6 +238,9 @@
     "switchToLight": "उज्यालो मोडमा जानुहोस्",
     "switchToDark": "अँध्यारो मोडमा जानुहोस्",
     "noServiceTypes": "कुनै सेवा प्रकार फेला परेन।",
+    "noServicesFiltered": "छानिएका फिल्टरहरूमा मिल्ने कुनै सेवा फेला परेन।",
+    "noReportsFiltered": "छानिएका फिल्टरहरूमा मिल्ने कुनै रिपोर्ट फेला परेन।",
+    "noConstituenciesFiltered": "छानिएका फिल्टरहरूमा मिल्ने कुनै निर्वाचन क्षेत्र फेला परेन।",
     "failedSaveServiceType": "सेवा प्रकार बचत गर्न सकिएन",
     "failedDeleteServiceType": "सेवा प्रकार मेटाउन सकिएन"
   },

@@ -76,7 +76,7 @@ export default function ConstituencyList({ constituencies, provinces, districts,
           </div>
         ))}
         {filtered.length === 0 && (
-          <p className="text-center text-gray-400 py-8 text-sm">No constituencies match the selected filters.</p>
+          <p className="text-center text-gray-400 py-8 text-sm">{t("admin.noConstituenciesFiltered")}</p>
         )}
       </div>
     </div>
