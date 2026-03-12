@@ -225,11 +225,14 @@ export default function AdminPage() {
             }}
             className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
           >
-            + {tab === "constituencies" ? t("admin.addConstituency")
-               : tab === "services" ? t("admin.addService")
-               : tab === "serviceTypes" ? t("admin.addServiceType")
-               : tab === "provinces" ? t("admin.addProvince")
-               : t("admin.addDistrict")}
+            <span aria-hidden="true">+</span>
+            <span className="hidden sm:inline sm:ml-1">
+              {tab === "constituencies" ? t("admin.addConstituency")
+                 : tab === "services" ? t("admin.addService")
+                 : tab === "serviceTypes" ? t("admin.addServiceType")
+                 : tab === "provinces" ? t("admin.addProvince")
+                 : t("admin.addDistrict")}
+            </span>
           </button>
         )}
       </div>

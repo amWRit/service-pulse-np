@@ -3,35 +3,75 @@
 import { useState, useEffect } from "react";
 import { useI18n } from "@/lib/i18n";
 import ConstituencyCard from "@/components/ConstituencyCard";
+import FilterBar from "@/components/admin/FilterBar";
 
 interface Constituency {
   id: string;
   name: string;
   nameNp: string;
+  districtId?: string | null;
   province: string | null;
   provinceNp?: string | null;
   imageUrl: string | null;
   _count: { services: number; reports: number };
-  district?: { province?: { name: string; nameNp: string } | null } | null;
+  district?: {
+    id: string;
+    name: string;
+    nameNp: string;
+    provinceId: string;
+    province?: { id: string; name: string; nameNp: string } | null;
+  } | null;
+}
+
+interface ProvinceOption {
+  id: string;
+  name: string;
+  nameNp: string;
+}
+
+interface DistrictOption {
+  id: string;
+  name: string;
+  nameNp: string;
+  provinceId: string;
 }
 
 export default function ConstituenciesPage() {
   const { t } = useI18n();
   const [constituencies, setConstituencies] = useState<Constituency[]>([]);
-  const [search, setSearch] = useState("");
+  const [provinces, setProvinces] = useState<ProvinceOption[]>([]);
+  const [districts, setDistricts] = useState<DistrictOption[]>([]);
+  const [selectedProvinceId, setSelectedProvinceId] = useState("");
+  const [selectedDistrictId, setSelectedDistrictId] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/constituencies")
-      .then((r) => r.json())
-      .then((data) => { setConstituencies(data); setLoading(false); })
+    Promise.all([
+      fetch("/api/constituencies").then((r) => r.json()),
+      fetch("/api/provinces").then((r) => r.json()),
+      fetch("/api/districts").then((r) => r.json()),
+    ])
+      .then(([constituencyData, provinceData, districtData]) => {
+        setConstituencies(constituencyData);
+        setProvinces(provinceData);
+        setDistricts(districtData);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, []);
 
-  const filtered = constituencies.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.nameNp.includes(search)
-  );
+  const filtered = constituencies.filter((constituency) => {
+    if (selectedProvinceId) {
+      const provinceId = constituency.district?.province?.id ?? "";
+      if (provinceId !== selectedProvinceId) return false;
+    }
+
+    if (selectedDistrictId && constituency.districtId !== selectedDistrictId) {
+      return false;
+    }
+
+    return true;
+  });
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -64,14 +104,17 @@ export default function ConstituenciesPage() {
           </div>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">🔍</span>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("home.searchPlaceholder")}
-            className="w-full pl-12 pr-4 py-3 rounded-2xl border dark:border-gray-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 text-base bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500"
+        <div className="flex justify-end [&>div]:mb-0">
+          <FilterBar    
+            provinces={provinces}
+            districts={districts}
+            selectedProvinceId={selectedProvinceId}
+            selectedDistrictId={selectedDistrictId}
+            onProvinceChange={(id) => {
+              setSelectedProvinceId(id);
+              setSelectedDistrictId("");
+            }}
+            onDistrictChange={(id) => setSelectedDistrictId(id)}
           />
         </div>
       </div>
@@ -85,7 +128,7 @@ export default function ConstituenciesPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-gray-400 text-lg">
-          No results found for &quot;{search}&quot;
+          No constituencies found for selected filters.
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
