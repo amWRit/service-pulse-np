@@ -59,6 +59,11 @@ export default function ReportModal({ onClose, challengeToken }: ReportModalProp
   const [servicesLoading, setServicesLoading] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [serviceTypeFilter, setServiceTypeFilter] = useState("all");
+  const [showServiceRequestModal, setShowServiceRequestModal] = useState(false);
+  const [serviceRequestName, setServiceRequestName] = useState("");
+  const [serviceRequestDescription, setServiceRequestDescription] = useState("");
+  const [serviceRequestSubmitting, setServiceRequestSubmitting] = useState(false);
+  const [serviceRequestSubmitted, setServiceRequestSubmitted] = useState(false);
 
 useEffect(() => {
     fetch("/api/constituencies")
@@ -116,6 +121,7 @@ useEffect(() => {
     setSelectedConstituency(c);
     setServicesLoading(true);
     setServiceTypeFilter("all");
+    setServiceRequestSubmitted(false);
     setStep("service");
     fetch(`/api/services?constituencyId=${c.id}`)
       .then((r) => r.json())
@@ -133,9 +139,40 @@ useEffect(() => {
       setStep("constituency");
       setServices([]);
       setSelectedConstituency(null);
+      setServiceRequestSubmitted(false);
     } else if (step === "report") {
       setStep("service");
       setSelectedService(null);
+    }
+  }
+
+  async function submitServiceRequest(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedConstituency || !serviceRequestName.trim()) return;
+
+    setServiceRequestSubmitting(true);
+
+    try {
+      const res = await fetch("/api/service-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: serviceRequestName.trim(),
+          description: serviceRequestDescription.trim(),
+          constituencyId: selectedConstituency.id,
+        }),
+      });
+
+      if (!res.ok) throw new Error("failed");
+
+      setShowServiceRequestModal(false);
+      setServiceRequestName("");
+      setServiceRequestDescription("");
+      setServiceRequestSubmitted(true);
+    } catch {
+      alert(t("report.serviceRequestError"));
+    } finally {
+      setServiceRequestSubmitting(false);
     }
   }
 
@@ -284,6 +321,13 @@ useEffect(() => {
                   <div className="text-center py-12 text-gray-400 text-sm">
                     <p className="text-3xl mb-2">🏗️</p>
                     <p>{t("report.noServices")}</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowServiceRequestModal(true)}
+                      className="mt-4 px-4 py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-colors"
+                    >
+                      {t("report.requestService")}
+                    </button>
                   </div>
                 ) : (
                   filteredServices.map((s) => (
@@ -296,6 +340,25 @@ useEffect(() => {
                       <p className="text-xs text-gray-400 mt-0.5">{t(`service.type.${s.type}`)}</p>
                     </button>
                   ))
+                )}
+
+                {!servicesLoading && serviceRequestSubmitted && (
+                  <div className="rounded-xl border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 px-4 py-3 text-sm text-green-800 dark:text-green-200">
+                    {t("report.serviceRequestSubmitted")}
+                  </div>
+                )}
+
+                {!servicesLoading && filteredServices.length > 0 && (
+                  <div className="rounded-xl border dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{t("report.serviceRequestPrompt")}</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowServiceRequestModal(true)}
+                      className="mt-2 text-sm font-semibold text-orange-600 hover:text-orange-700"
+                    >
+                      {t("report.requestService")}
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -314,6 +377,58 @@ useEffect(() => {
           )}
 
         </div>
+
+        {showServiceRequestModal && selectedConstituency && (
+          <div
+            className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowServiceRequestModal(false); }}
+          >
+            <div className="bg-white dark:bg-gray-800 w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl border dark:border-gray-700 p-5">
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">{t("report.requestService")}</h3>
+              <p className="text-xs text-gray-500 mt-1 mb-4">
+                {t("report.serviceRequestModalHelp")}
+              </p>
+
+              <form onSubmit={submitServiceRequest} className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{t("report.serviceNameLabel")}</label>
+                  <input
+                    value={serviceRequestName}
+                    onChange={(e) => setServiceRequestName(e.target.value)}
+                    required
+                    className="mt-1 w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{t("report.serviceDescriptionLabel")}</label>
+                  <textarea
+                    value={serviceRequestDescription}
+                    onChange={(e) => setServiceRequestDescription(e.target.value)}
+                    rows={3}
+                    className="mt-1 w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-y"
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="submit"
+                    disabled={serviceRequestSubmitting}
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white rounded-lg py-2 font-semibold text-sm transition-colors"
+                  >
+                    {serviceRequestSubmitting ? t("report.submitting") : t("report.submitServiceRequest")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowServiceRequestModal(false)}
+                    className="flex-1 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-lg py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    {t("report.cancelEdit")}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -16,6 +16,12 @@ enum Role {
   citizen
 }
 
+enum ServiceRequestStatus {
+  pending
+  approved
+  rejected
+}
+
 model ServiceType {
   id     String @id @default(cuid())
   slug   String @unique // e.g. "hospital", "government_office"
@@ -35,6 +41,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   reports       Report[]
+  reviewedServiceRequests PublicServiceRequest[]
   badges        UserBadge[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -102,6 +109,7 @@ model Constituency {
   districtId  String?
   district    District?       @relation(fields: [districtId], references: [id])
   services    PublicService[]
+  serviceRequests PublicServiceRequest[]
   reports     Report[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -119,8 +127,29 @@ model PublicService {
   constituencyId String
   constituency   Constituency @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
   reports        Report[]
+  approvedRequests PublicServiceRequest[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+}
+
+model PublicServiceRequest {
+  id                String               @id @default(cuid())
+  name              String
+  description       String?
+  constituencyId    String
+  status            ServiceRequestStatus @default(pending)
+  reviewedByUserId  String?
+  approvedServiceId String?
+  reviewedAt        DateTime?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  constituency Constituency @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
+  reviewedBy   User?        @relation(fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  approvedService PublicService? @relation(fields: [approvedServiceId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([constituencyId])
 }
 
 model Report {

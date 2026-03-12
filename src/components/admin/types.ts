@@ -55,6 +55,21 @@ export interface Service {
   reportCount?: number;
 }
 
+export interface ServiceRequest {
+  id: string;
+  name: string;
+  description?: string | null;
+  constituencyId: string;
+  status: "pending" | "approved" | "rejected";
+  approvedServiceId?: string | null;
+  reviewedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  constituency?: { id: string; name: string; nameNp: string };
+  approvedService?: { id: string; name: string; nameNp: string } | null;
+  reviewedBy?: { id: string; name?: string | null; email?: string | null } | null;
+}
+
 export interface Report {
   id: string;
   constituencyId?: string;
@@ -66,6 +81,19 @@ export interface Report {
   createdAt: string;
   publicService?: { name: string; type?: string };
   user?: { name: string } | null;
+}
+
+export type Tab = "constituencies" | "services" | "serviceRequests" | "serviceTypes" | "reports" | "provinces" | "districts";
+export type SidebarNav = "manage" | "settings";
+
+export interface TabCounts {
+  constituencies: number;
+  services: number;
+  serviceRequests: number;
+  serviceTypes: number;
+  reports: number;
+  provinces: number;
+  districts: number;
 }
 
 export interface ConstituencyFormData {

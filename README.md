@@ -7,11 +7,14 @@ Real-time public service experience tracker for Nepal.
 ## ✨ Features
 
 - Track and share your experiences with public services across Nepal
+- Rate services and submit detailed reports with star ratings
+- Request new public services to be added — admins review and approve
 - Earn badges for reporting and rating services
 - View leaderboards of top contributors
 - Browse services and reports by constituency, district, and province
 - Switch between English and Nepali languages
-- Admin dashboard for managing services, reports, and users
+- Math captcha verification to prevent spam submissions
+- Full admin dashboard for managing services, service types, reports, service requests, constituencies, districts, and provinces
 - Mobile-friendly, fast, and easy to use
 
 ---
