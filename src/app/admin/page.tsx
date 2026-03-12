@@ -15,12 +15,14 @@ import DistrictList from "@/components/admin/DistrictList";
 import DistrictModal from "@/components/admin/DistrictModal";
 import ServiceTypeList from "@/components/admin/ServiceTypeList";
 import ServiceTypeModal from "@/components/admin/ServiceTypeModal";
-import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData, ServiceTypeConfig } from "@/components/admin/types";
+import ServiceRequestList from "@/components/admin/ServiceRequestList";
+import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData, ServiceTypeConfig, ServiceRequest } from "@/components/admin/types";
 
-type Tab = "constituencies" | "services" | "serviceTypes" | "reports" | "provinces" | "districts";
+type Tab = "constituencies" | "services" | "serviceRequests" | "serviceTypes" | "reports" | "provinces" | "districts";
 type Modal =
   | "addConstituency" | "editConstituency"
   | "addService" | "editService"
+  | "approveServiceRequest"
   | "addServiceType" | "editServiceType"
   | "addProvince" | "editProvince"
   | "addDistrict" | "editDistrict"
@@ -34,6 +36,8 @@ export default function AdminPage() {
   const [constituencies, setConstituencies] = useState<Constituency[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
+  const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
+  const [serviceRequestStatus, setServiceRequestStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [serviceTypes, setServiceTypes] = useState<ServiceTypeConfig[]>([]);
@@ -44,6 +48,7 @@ export default function AdminPage() {
   const [editingServiceType, setEditingServiceType] = useState<ServiceTypeConfig | null>(null);
   const [editingProvince, setEditingProvince] = useState<Province | null>(null);
   const [editingDistrict, setEditingDistrict] = useState<District | null>(null);
+  const [approvingRequest, setApprovingRequest] = useState<ServiceRequest | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -56,9 +61,10 @@ export default function AdminPage() {
 
   const loadAll = async () => {
     setLoading(true);
-    const [c, s, r, p, d, st] = await Promise.all([
+    const [c, s, sr, r, p, d, st] = await Promise.all([
       fetch("/api/constituencies").then((x) => x.json()),
       fetch("/api/services").then((x) => x.json()),
+      fetch("/api/service-requests").then((x) => x.json()),
       fetch("/api/reports").then((x) => x.json()),
       fetch("/api/provinces").then((x) => x.json()),
       fetch("/api/districts").then((x) => x.json()),
@@ -66,6 +72,7 @@ export default function AdminPage() {
     ]);
     setConstituencies(c);
     setServices(s);
+    setServiceRequests(sr);
     setReports(r);
     setProvinces(p);
     setDistricts(d);
@@ -100,6 +107,20 @@ export default function AdminPage() {
     loadAll();
   };
 
+  const rejectServiceRequest = async (id: string) => {
+    if (!confirm(t("admin.confirmRejectServiceRequest"))) return;
+    const res = await fetch(`/api/service-requests/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "reject" }),
+    });
+    if (!res.ok) {
+      alert(t("admin.failedUpdateServiceRequest"));
+      return;
+    }
+    loadAll();
+  };
+
   const submitConstituency = async (form: ConstituencyFormData) => {
     const url = editingConstituency
       ? `/api/constituencies/${editingConstituency.id}`
@@ -125,6 +146,28 @@ export default function AdminPage() {
     });
     setModal(null);
     setEditingService(null);
+    loadAll();
+  };
+
+  const submitApprovedServiceRequest = async (form: ServiceFormData) => {
+    if (!approvingRequest) return;
+
+    const res = await fetch(`/api/service-requests/${approvingRequest.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "approve",
+        ...form,
+      }),
+    });
+
+    if (!res.ok) {
+      alert(t("admin.failedUpdateServiceRequest"));
+      return;
+    }
+
+    setModal(null);
+    setApprovingRequest(null);
     loadAll();
   };
 
@@ -204,6 +247,7 @@ export default function AdminPage() {
     setEditingServiceType(null);
     setEditingProvince(null);
     setEditingDistrict(null);
+    setApprovingRequest(null);
   };
 
   if (status === "loading" || loading) {
@@ -215,7 +259,7 @@ export default function AdminPage() {
         </div>
 
         <div className="flex flex-wrap gap-2 mb-6 border-b dark:border-gray-700 pb-2">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(7)].map((_, i) => (
             <div
               key={i}
               className="h-9 w-28 rounded-lg bg-gray-200 dark:bg-gray-800"
@@ -248,7 +292,7 @@ export default function AdminPage() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">{t("admin.dashboard")} 🔒</h1>
-        {tab !== "reports" && (
+        {tab !== "reports" && tab !== "serviceRequests" && (
           <button
             onClick={() => {
               if (tab === "constituencies") setModal("addConstituency");
@@ -276,6 +320,7 @@ export default function AdminPage() {
         {([
           { key: "constituencies", label: t("admin.constituencies"), count: constituencies.length },
           { key: "services", label: t("admin.services"), count: services.length },
+          { key: "serviceRequests", label: t("admin.serviceRequests"), count: serviceRequests.length },
           { key: "serviceTypes", label: t("admin.serviceTypes"), count: serviceTypes.length },
           { key: "reports", label: t("admin.reports"), count: reports.length },
           { key: "provinces", label: t("admin.provinces"), count: provinces.length },
@@ -322,6 +367,19 @@ export default function AdminPage() {
             setModal("editServiceType");
           }}
           onDelete={deleteServiceType}
+        />
+      )}
+
+      {tab === "serviceRequests" && (
+        <ServiceRequestList
+          requests={serviceRequests}
+          statusFilter={serviceRequestStatus}
+          onFilterChange={setServiceRequestStatus}
+          onApprove={(request) => {
+            setApprovingRequest(request);
+            setModal("approveServiceRequest");
+          }}
+          onReject={rejectServiceRequest}
         />
       )}
 
@@ -416,6 +474,24 @@ export default function AdminPage() {
               : undefined
           }
           onSubmit={submitService}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal === "approveServiceRequest" && approvingRequest && (
+        <AddServiceModal
+          constituencies={constituencies}
+          serviceTypes={serviceTypes}
+          initialData={{
+            name: approvingRequest.name,
+            nameNp: approvingRequest.name,
+            type: "other",
+            location: "",
+            description: approvingRequest.description ?? "",
+            descriptionNp: "",
+            constituencyId: approvingRequest.constituencyId,
+          }}
+          onSubmit={submitApprovedServiceRequest}
           onClose={closeModal}
         />
       )}
