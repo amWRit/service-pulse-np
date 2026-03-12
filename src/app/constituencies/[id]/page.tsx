@@ -10,6 +10,7 @@ import ConstituencyInsightsTab from "@/components/constituency/ConstituencyInsig
 import ConstituencyServicesTab from "@/components/constituency/ConstituencyServicesTab";
 import ConstituencyRankingsTab from "@/components/constituency/ConstituencyRankingsTab";
 import { Service, SummaryCard } from "@/components/constituency/types";
+import { BarChart3, ListChecks, Trophy } from "lucide-react";
 
 type TabKey = "insights" | "services" | "rankings";
 
@@ -149,10 +150,10 @@ export default function ConstituencyPage() {
     return { rank: betterCount + 1, total: values.length };
   };
 
-  const tabs: { key: TabKey; label: string }[] = [
-    { key: "insights", label: t("constituency.tabs.insights") },
-    { key: "services", label: t("constituency.tabs.services") },
-    { key: "rankings", label: t("constituency.tabs.rankings") },
+  const tabs: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+    { key: "insights", label: t("constituency.tabs.insights"), icon: BarChart3 },
+    { key: "services", label: t("constituency.tabs.services"), icon: ListChecks },
+    { key: "rankings", label: t("constituency.tabs.rankings"), icon: Trophy },
   ];
 
   const summaryCards: SummaryCard[] = [
@@ -256,19 +257,29 @@ export default function ConstituencyPage() {
         </div>
       </div>
 
-      <div className="mb-6 rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/90 dark:bg-gray-900/70 p-2 shadow-sm">
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-6 rounded-3xl border border-gray-200/70 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900/90 dark:to-gray-950/70 p-2 shadow-sm">
+        <div className="grid grid-cols-3 gap-2">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+              aria-label={tab.label}
+              className={`px-3 sm:px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-200 inline-flex items-center justify-center gap-2 border ${
                 activeTab === tab.key
-                  ? "bg-orange-500 text-white shadow-sm"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800"
+                  ? "border-orange-300/80 dark:border-orange-700 bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300 shadow-sm ring-1 ring-orange-200/70 dark:ring-orange-900/60"
+                  : "border-transparent text-gray-600 dark:text-gray-300 hover:border-gray-200 dark:hover:border-gray-700 hover:bg-white/80 dark:hover:bg-gray-900/80"
               }`}
             >
-              {tab.label}
+              <span
+                className={`inline-flex h-6 w-6 items-center justify-center rounded-full transition-colors ${
+                  activeTab === tab.key
+                    ? "bg-orange-100 dark:bg-orange-900/40"
+                    : "bg-gray-100 dark:bg-gray-800"
+                }`}
+              >
+                <tab.icon className="w-3.5 h-3.5" />
+              </span>
+              <span className="hidden sm:inline">{tab.label}</span>
             </button>
           ))}
         </div>

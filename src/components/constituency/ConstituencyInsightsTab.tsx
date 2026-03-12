@@ -150,28 +150,34 @@ export default function ConstituencyInsightsTab({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-          <div className="rounded-xl border border-emerald-100 dark:border-emerald-900/60 bg-emerald-50/80 dark:bg-emerald-950/40 px-4 py-3">
-            <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-              {t("constituency.chart.fastHigh")}
-            </p>
+        <details className="mb-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-950/50 p-3">
+          <summary className="cursor-pointer list-none text-sm font-semibold text-gray-700 dark:text-gray-200 flex items-center justify-between">
+            <span>{t("constituency.chart.guideTitle")}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{t("constituency.chart.guideToggle")}</span>
+          </summary>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+            <div className="rounded-xl border border-emerald-100 dark:border-emerald-900/60 bg-emerald-50/80 dark:bg-emerald-950/40 px-4 py-3">
+              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                {t("constituency.chart.fastHigh")}
+              </p>
+            </div>
+            <div className="rounded-xl border border-orange-100 dark:border-orange-900/60 bg-orange-50/80 dark:bg-orange-950/40 px-4 py-3">
+              <p className="text-sm font-semibold text-orange-700 dark:text-orange-300">
+                {t("constituency.chart.slowHigh")}
+              </p>
+            </div>
+            <div className="rounded-xl border border-sky-100 dark:border-sky-900/60 bg-sky-50/80 dark:bg-sky-950/40 px-4 py-3">
+              <p className="text-sm font-semibold text-sky-700 dark:text-sky-300">
+                {t("constituency.chart.fastLow")}
+              </p>
+            </div>
+            <div className="rounded-xl border border-rose-100 dark:border-rose-900/60 bg-rose-50/80 dark:bg-rose-950/40 px-4 py-3">
+              <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">
+                {t("constituency.chart.slowLow")}
+              </p>
+            </div>
           </div>
-          <div className="rounded-xl border border-orange-100 dark:border-orange-900/60 bg-orange-50/80 dark:bg-orange-950/40 px-4 py-3">
-            <p className="text-sm font-semibold text-orange-700 dark:text-orange-300">
-              {t("constituency.chart.slowHigh")}
-            </p>
-          </div>
-          <div className="rounded-xl border border-sky-100 dark:border-sky-900/60 bg-sky-50/80 dark:bg-sky-950/40 px-4 py-3">
-            <p className="text-sm font-semibold text-sky-700 dark:text-sky-300">
-              {t("constituency.chart.fastLow")}
-            </p>
-          </div>
-          <div className="rounded-xl border border-rose-100 dark:border-rose-900/60 bg-rose-50/80 dark:bg-rose-950/40 px-4 py-3">
-            <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">
-              {t("constituency.chart.slowLow")}
-            </p>
-          </div>
-        </div>
+        </details>
 
         {bubbleServices.length > 0 ? (
           <>

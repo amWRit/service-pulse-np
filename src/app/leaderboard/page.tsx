@@ -49,12 +49,6 @@ export default function LeaderboardPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <div className="text-5xl mb-3">🏆</div>
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">{t("leaderboard.title")}</h1>
-        <p className="text-gray-500 mt-1 text-sm">Based on real citizen reports</p>
-      </div>
-
       {/* Tabs */}
       <div className="flex flex-wrap justify-center gap-2 mb-6">
         {TABS.map((tab) => (
