@@ -4,20 +4,26 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { useI18n } from "@/lib/i18n";
-import ServiceCard from "@/components/ServiceCard";
 import Link from "next/link";
 import { gDriveUrl } from "@/lib/utils";
+import ConstituencyInsightsTab from "@/components/constituency/ConstituencyInsightsTab";
+import ConstituencyServicesTab from "@/components/constituency/ConstituencyServicesTab";
+import ConstituencyRankingsTab from "@/components/constituency/ConstituencyRankingsTab";
+import { Service, SummaryCard } from "@/components/constituency/types";
 
-interface Service {
-  id: string;
-  name: string;
-  nameNp: string;
-  type: string;
-  location?: string;
-  constituencyId: string;
-  avgRating?: number | null;
-  avgTime?: number | null;
-  reportCount?: number;
+type TabKey = "insights" | "services" | "rankings";
+
+const BUBBLE_COLORS = [
+  "bg-orange-500/80 border-orange-300",
+  "bg-sky-500/80 border-sky-300",
+  "bg-emerald-500/80 border-emerald-300",
+  "bg-fuchsia-500/80 border-fuchsia-300",
+  "bg-amber-500/80 border-amber-300",
+  "bg-violet-500/80 border-violet-300",
+];
+
+function hasNumber(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
 }
 
 interface Constituency {
@@ -38,6 +44,7 @@ export default function ConstituencyPage() {
   const [data, setData] = useState<Constituency | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabKey>("insights");
   const [filter, setFilter] = useState("all");
 
   const id = params.id as string;
@@ -55,6 +62,120 @@ export default function ConstituencyPage() {
 
   const serviceTypes = ["all", ...Array.from(new Set(services.map((s) => s.type)))];
   const filtered = filter === "all" ? services : services.filter((s) => s.type === filter);
+  const servicesWithRatings = services.filter((service) => hasNumber(service.avgRating));
+  const servicesWithTime = services.filter((service) => hasNumber(service.avgTime));
+  const servicesWithReports = services.filter((service) => (service.reportCount ?? 0) > 0);
+  const bubbleServices = services.filter(
+    (service) => hasNumber(service.avgRating) && hasNumber(service.avgTime)
+  );
+  const typeColorMap = new Map<string, string>();
+
+  serviceTypes
+    .filter((type) => type !== "all")
+    .forEach((type, index) => {
+      typeColorMap.set(type, BUBBLE_COLORS[index % BUBBLE_COLORS.length]);
+    });
+
+  const bestRated = [...servicesWithRatings].sort(
+    (a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0) || (b.reportCount ?? 0) - (a.reportCount ?? 0)
+  )[0] ?? null;
+  const fastest = [...servicesWithTime].sort(
+    (a, b) => (a.avgTime ?? Number.MAX_SAFE_INTEGER) - (b.avgTime ?? Number.MAX_SAFE_INTEGER)
+  )[0] ?? null;
+  const mostReported = [...servicesWithReports].sort(
+    (a, b) => (b.reportCount ?? 0) - (a.reportCount ?? 0) || (b.avgRating ?? 0) - (a.avgRating ?? 0)
+  )[0] ?? null;
+
+  const ratingRanking = [...servicesWithRatings].sort(
+    (a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0) || (b.reportCount ?? 0) - (a.reportCount ?? 0)
+  );
+  const timeRanking = [...servicesWithTime].sort(
+    (a, b) => (a.avgTime ?? Number.MAX_SAFE_INTEGER) - (b.avgTime ?? Number.MAX_SAFE_INTEGER)
+  );
+  const reportRanking = [...services].sort(
+    (a, b) => (b.reportCount ?? 0) - (a.reportCount ?? 0) || (b.avgRating ?? 0) - (a.avgRating ?? 0)
+  ).filter((service) => (service.reportCount ?? 0) > 0);
+
+  const timeValues = bubbleServices.map((service) => service.avgTime as number);
+  const ratingValues = bubbleServices.map((service) => service.avgRating as number);
+  const reportValues = bubbleServices.map((service) => service.reportCount ?? 0);
+
+  const timeMin = timeValues.length ? Math.min(...timeValues) : 0;
+  const timeMax = timeValues.length ? Math.max(...timeValues) : 0;
+  const ratingMin = ratingValues.length ? Math.min(...ratingValues) : 0;
+  const ratingMax = ratingValues.length ? Math.max(...ratingValues) : 0;
+  const reportMin = reportValues.length ? Math.min(...reportValues) : 0;
+  const reportMax = reportValues.length ? Math.max(...reportValues) : 0;
+
+  const formatNumber = (value: number, maximumFractionDigits = 1) => new Intl.NumberFormat(
+    locale === "np" ? "ne-NP" : "en-US",
+    { maximumFractionDigits, minimumFractionDigits: maximumFractionDigits === 0 ? 0 : 1 }
+  ).format(value);
+
+  const getServiceName = (service: Service) => (locale === "np" ? service.nameNp : service.name);
+  const getTypeLabel = (type: string) => type === "all" ? t("constituency.allTypes") : t(`service.type.${type}`);
+  const getTypeColorClass = (type: string) => typeColorMap.get(type) ?? BUBBLE_COLORS[0];
+
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: "insights", label: t("constituency.tabs.insights") },
+    { key: "services", label: t("constituency.tabs.services") },
+    { key: "rankings", label: t("constituency.tabs.rankings") },
+  ];
+
+  const summaryCards: SummaryCard[] = [
+    {
+      key: "best-rated",
+      title: t("constituency.summary.bestRated"),
+      service: bestRated,
+      value: bestRated && hasNumber(bestRated.avgRating)
+        ? `${formatNumber(bestRated.avgRating)} / 5`
+        : null,
+      accent: "from-amber-400 to-orange-500",
+    },
+    {
+      key: "fastest",
+      title: t("constituency.summary.fastest"),
+      service: fastest,
+      value: fastest && hasNumber(fastest.avgTime)
+        ? `${formatNumber(fastest.avgTime)} ${t("home.minutes")}`
+        : null,
+      accent: "from-sky-400 to-cyan-500",
+    },
+    {
+      key: "most-reported",
+      title: t("constituency.summary.mostReported"),
+      service: mostReported,
+      value: mostReported
+        ? `${formatNumber(mostReported.reportCount ?? 0, 0)} ${t("service.reports")}`
+        : null,
+      accent: "from-emerald-400 to-green-500",
+    },
+  ];
+
+  const rankingSections = [
+    {
+      key: "rating",
+      title: t("constituency.rankings.bestRated"),
+      items: ratingRanking,
+      value: (service: Service) => hasNumber(service.avgRating)
+        ? `${formatNumber(service.avgRating)} / 5`
+        : "—",
+    },
+    {
+      key: "time",
+      title: t("constituency.rankings.fastest"),
+      items: timeRanking,
+      value: (service: Service) => hasNumber(service.avgTime)
+        ? `${formatNumber(service.avgTime)} ${t("home.minutes")}`
+        : "—",
+    },
+    {
+      key: "reports",
+      title: t("constituency.rankings.mostReported"),
+      items: reportRanking,
+      value: (service: Service) => `${formatNumber(service.reportCount ?? 0, 0)} ${t("service.reports")}`,
+    },
+  ];
 
   if (loading) {
     return (
@@ -67,7 +188,7 @@ export default function ConstituencyPage() {
     );
   }
 
-  if (!data) return <div className="p-8 text-center text-red-500">Constituency not found</div>;
+  if (!data) return <div className="p-8 text-center text-red-500">{t("constituency.notFound")}</div>;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -102,43 +223,62 @@ export default function ConstituencyPage() {
         </div>
       </div>
 
-      {/* Filter by type */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {serviceTypes.map((type) => (
-          <button
-            key={type}
-            onClick={() => setFilter(type)}
-            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-              filter === type
-                ? "bg-orange-500 text-white border-orange-500"
-                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-orange-300"
-            }`}
-          >
-            {type === "all" ? "All" : t(`service.type.${type}`)}
-          </button>
-        ))}
+      <div className="mb-6 rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/90 dark:bg-gray-900/70 p-2 shadow-sm">
+        <div className="flex flex-wrap gap-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                activeTab === tab.key
+                  ? "bg-orange-500 text-white shadow-sm"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Services Grid */}
-      <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
-        {filtered.length} {t("nav.services")}
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((svc) => (
-          <ServiceCard
-            key={svc.id}
-            id={svc.id}
-            name={svc.name}
-            nameNp={svc.nameNp}
-            type={svc.type}
-            location={svc.location}
-            avgRating={svc.avgRating}
-            avgTime={svc.avgTime}
-            reportCount={svc.reportCount}
-            constituencyId={id}
-          />
-        ))}
-      </div>
+      {activeTab === "insights" && (
+        <ConstituencyInsightsTab
+          t={t}
+          serviceTypes={serviceTypes}
+          summaryCards={summaryCards}
+          bubbleServices={bubbleServices}
+          timeMin={timeMin}
+          timeMax={timeMax}
+          ratingMin={ratingMin}
+          ratingMax={ratingMax}
+          reportMin={reportMin}
+          reportMax={reportMax}
+          formatNumber={formatNumber}
+          getServiceName={getServiceName}
+          getTypeColorClass={getTypeColorClass}
+        />
+      )}
+
+      {activeTab === "services" && (
+        <ConstituencyServicesTab
+          t={t}
+          serviceTypes={serviceTypes}
+          filter={filter}
+          setFilter={setFilter}
+          filtered={filtered}
+          getTypeLabel={getTypeLabel}
+          constituencyId={id}
+        />
+      )}
+
+      {activeTab === "rankings" && (
+        <ConstituencyRankingsTab
+          t={t}
+          sections={rankingSections}
+          formatNumber={formatNumber}
+          getServiceName={getServiceName}
+        />
+      )}
     </div>
   );
 }

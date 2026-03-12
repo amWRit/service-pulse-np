@@ -103,6 +103,56 @@
     "rating": "Rating",
     "reports": "Reports"
   },
+  "constituency": {
+    "notFound": "Constituency not found",
+    "allTypes": "All",
+    "tabs": {
+      "insights": "Insights",
+      "services": "Services",
+      "rankings": "Rankings"
+    },
+    "insights": {
+      "title": "Constituency insights",
+      "subtitle": "See which services are performing best and where citizens are waiting longer."
+    },
+    "summary": {
+      "bestRated": "Best rated service",
+      "fastest": "Fastest service",
+      "mostReported": "Most reported service",
+      "noData": "Not enough data yet.",
+      "badges": {
+        "bestRated": "Top pick",
+        "fastest": "Quick win",
+        "mostReported": "Most talked about"
+      }
+    },
+    "chart": {
+      "title": "Service performance map",
+      "subtitle": "Higher bubbles mean better ratings. Bubbles farther right mean longer service time.",
+      "legendTitle": "Service types",
+      "xAxis": "Average time",
+      "yAxis": "Average rating",
+      "fastHigh": "Fast & highly rated",
+      "slowHigh": "Slower but highly rated",
+      "fastLow": "Fast but lower rated",
+      "slowLow": "Slow & lower rated",
+      "bubbleHint": "Bubble size shows how many reports each service has.",
+      "noData": "Not enough rating and time data to draw the chart yet."
+    },
+    "services": {
+      "title": "Service list",
+      "filterLabel": "Filter by service type",
+      "empty": "No services match this filter."
+    },
+    "rankings": {
+      "title": "Service rankings",
+      "subtitle": "Compare services by rating, speed, and report volume.",
+      "bestRated": "Top rated",
+      "fastest": "Fastest",
+      "mostReported": "Most reported",
+      "empty": "No ranking data available yet."
+    }
+  },
   "admin": {
     "dashboard": "Admin Dashboard",
     "constituencies": "Constituencies",
