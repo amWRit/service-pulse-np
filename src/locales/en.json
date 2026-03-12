@@ -12,6 +12,45 @@
   "home": {
     "title": "Service Pulse",
     "subtitle": "Real-time public service experience tracker",
+    "tabs": {
+      "overview": "Overview",
+      "insights": "Insights",
+      "leaderboard": "Leaderboard"
+    },
+    "overview": {
+      "exploreConstituencies": "Explore Constituencies",
+      "openLeaderboard": "Open Leaderboard"
+    },
+    "insights": {
+      "title": "National insights",
+      "subtitle": "Quick highlights from citizen reports across constituencies.",
+      "bestRated": "Best rated",
+      "fastest": "Fastest",
+      "mostReported": "Most reported",
+      "noData": "No data yet. Submit some reports!",
+      "chart": {
+        "title": "National service performance map",
+        "subtitle": "Higher bubbles mean better ratings. Bubbles farther right mean longer service time.",
+        "legendTitle": "Service types",
+        "guideTitle": "How to read this chart",
+        "guideToggle": "Expand",
+        "filters": {
+          "province": "Province",
+          "constituency": "Constituency",
+          "serviceType": "Service type"
+        },
+        "unknownProvince": "Unknown province",
+        "xAxis": "Average time",
+        "yAxis": "Average rating",
+        "fastHigh": "Fast & highly rated",
+        "slowHigh": "Slower but highly rated",
+        "fastLow": "Fast but lower rated",
+        "slowLow": "Slow & lower rated",
+        "bubbleHint": "Bubble size shows how many reports each service has.",
+        "noData": "Not enough rating and time data to draw the chart yet.",
+        "noMatch": "No services match the selected filters."
+      }
+    },
     "searchPlaceholder": "Search constituency...",
     "selectConstituency": "Select your constituency",
     "viewServices": "View Services",
@@ -102,6 +141,61 @@
     "avgTime": "Avg Time (min)",
     "rating": "Rating",
     "reports": "Reports"
+  },
+  "constituency": {
+    "notFound": "Constituency not found",
+    "allTypes": "All",
+    "tabs": {
+      "insights": "Insights",
+      "services": "Services",
+      "rankings": "Rankings"
+    },
+    "insights": {
+      "title": "Constituency insights",
+      "subtitle": "See which services are performing best and where citizens are waiting longer."
+    },
+    "summary": {
+      "bestRated": "Best rated service",
+      "fastest": "Fastest service",
+      "mostReported": "Most reported service",
+      "noData": "Not enough data yet.",
+      "topPercentPrefix": "Top",
+      "topPercentHint": "Percentile rank within this constituency.",
+      "globalRankLabel": "Across all constituencies",
+      "badges": {
+        "bestRated": "Top pick",
+        "fastest": "Quick win",
+        "mostReported": "Most talked about"
+      }
+    },
+    "chart": {
+      "title": "Service performance map",
+      "subtitle": "Higher bubbles mean better ratings. Bubbles farther right mean longer service time.",
+      "guideTitle": "How to read this chart",
+      "guideToggle": "Expand",
+      "legendTitle": "Service types",
+      "xAxis": "Average time",
+      "yAxis": "Average rating",
+      "fastHigh": "Fast & highly rated",
+      "slowHigh": "Slower but highly rated",
+      "fastLow": "Fast but lower rated",
+      "slowLow": "Slow & lower rated",
+      "bubbleHint": "Bubble size shows how many reports each service has.",
+      "noData": "Not enough rating and time data to draw the chart yet."
+    },
+    "services": {
+      "title": "Service list",
+      "filterLabel": "Filter by service type",
+      "empty": "No services match this filter."
+    },
+    "rankings": {
+      "title": "Service rankings",
+      "subtitle": "Compare services by rating, speed, and report volume.",
+      "bestRated": "Top rated",
+      "fastest": "Fastest",
+      "mostReported": "Most reported",
+      "empty": "No ranking data available yet."
+    }
   },
   "admin": {
     "dashboard": "Admin Dashboard",
