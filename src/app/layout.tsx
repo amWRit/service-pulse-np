@@ -9,7 +9,7 @@ import SessionWrapper from "@/components/SessionWrapper";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://service-pulse.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sewasuchak.vercel.app";
 const socialImage = "/opengraph-image";
 
 export const metadata: Metadata = {
