@@ -150,14 +150,16 @@ export default function ConstituencyPage() {
   const getTypeLabel = (type: string) => type === "all" ? t("constituency.allTypes") : t(`service.type.${type}`);
   const getTypeColorClass = (type: string) => typeColorMap.get(type) ?? BUBBLE_COLORS[0];
   const getGlobalRank = (key: string, service: Service) => {
+    const total = allServices.length;
+    if (total === 0) return null;
+
     if (key === "best-rated") {
       if (!hasNumber(service.avgRating)) return null;
       const values = allServices
         .map((item) => item.avgRating)
         .filter((value): value is number => hasNumber(value));
-      if (values.length === 0) return null;
       const betterCount = values.filter((value) => value > service.avgRating!).length;
-      return { rank: betterCount + 1, total: values.length };
+      return { rank: betterCount + 1, total };
     }
 
     if (key === "fastest") {
@@ -165,9 +167,8 @@ export default function ConstituencyPage() {
       const values = allServices
         .map((item) => item.avgTime)
         .filter((value): value is number => hasNumber(value));
-      if (values.length === 0) return null;
       const betterCount = values.filter((value) => value < service.avgTime!).length;
-      return { rank: betterCount + 1, total: values.length };
+      return { rank: betterCount + 1, total };
     }
 
     const reportCount = service.reportCount ?? 0;
@@ -175,9 +176,8 @@ export default function ConstituencyPage() {
     const values = allServices
       .map((item) => item.reportCount ?? 0)
       .filter((value) => value > 0);
-    if (values.length === 0) return null;
     const betterCount = values.filter((value) => value > reportCount).length;
-    return { rank: betterCount + 1, total: values.length };
+    return { rank: betterCount + 1, total };
   };
 
   const tabs: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
