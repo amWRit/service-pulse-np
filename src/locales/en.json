@@ -215,6 +215,10 @@
   },
   "admin": {
     "dashboard": "Admin Dashboard",
+    "management": "Admin Management",
+    "manage": "Manage",
+    "settings": "Settings",
+    "settingsComingSoon": "Settings page coming soon...",
     "constituencies": "Constituencies",
     "services": "Public Services",
     "serviceRequests": "Service Requests",

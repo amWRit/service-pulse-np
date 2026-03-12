@@ -215,6 +215,10 @@
   },
   "admin": {
     "dashboard": "एडमिन ड्यासबोर्ड",
+    "management": "व्यवस्थापन",
+    "manage": "व्यवस्थापन",
+    "settings": "सेटिङहरू",
+    "settingsComingSoon": "सेटिङ पृष्ठ छिट्टै आउँदैछ...",
     "constituencies": "निर्वाचन क्षेत्रहरू",
     "services": "सार्वजनिक सेवाहरू",
     "serviceRequests": "सेवा अनुरोधहरू",

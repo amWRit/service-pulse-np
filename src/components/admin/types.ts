@@ -83,6 +83,19 @@ export interface Report {
   user?: { name: string } | null;
 }
 
+export type Tab = "constituencies" | "services" | "serviceRequests" | "serviceTypes" | "reports" | "provinces" | "districts";
+export type SidebarNav = "manage" | "settings";
+
+export interface TabCounts {
+  constituencies: number;
+  services: number;
+  serviceRequests: number;
+  serviceTypes: number;
+  reports: number;
+  provinces: number;
+  districts: number;
+}
+
 export interface ConstituencyFormData {
   name: string;
   nameNp: string;
