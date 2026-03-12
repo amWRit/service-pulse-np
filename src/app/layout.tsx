@@ -14,14 +14,14 @@ const socialImage = "/opengraph-image";
 
 export const metadata: Metadata = {
   title: "Service Pulse | सेवा सूचक",
-  description: "Real-time public service experience tracker for Nepal",
+  description: "नेपालका सार्वजनिक सेवाहरूको अनुभव ट्र्याक गर्ने प्लेटफर्म",
   metadataBase: new URL(siteUrl),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Service Pulse | सेवा सूचक",
-    description: "Real-time public service experience tracker for Nepal",
+    description: "नेपालका सार्वजनिक सेवाहरूको अनुभव ट्र्याक गर्ने प्लेटफर्म",
     url: "/",
     siteName: "Service Pulse",
     type: "website",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Service Pulse | सेवा सूचक",
-    description: "Real-time public service experience tracker for Nepal",
+    description: "नेपालका सार्वजनिक सेवाहरूको अनुभव ट्र्याक गर्ने प्लेटफर्म",
     images: [socialImage],
   },
   icons: {

@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
 export const size = {
   width: 1200,
@@ -7,7 +9,10 @@ export const size = {
 
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  const iconBuffer = await readFile(join(process.cwd(), "public", "icons", "icon.png"));
+  const iconBase64 = iconBuffer.toString("base64");
+
   return new ImageResponse(
     (
       <div
@@ -32,8 +37,14 @@ export default function OpenGraphImage() {
             color: "#9a3412",
           }}
         >
-          <span>📊</span>
-          <span>Service Pulse</span>
+          <img
+            src={`data:image/png;base64,${iconBase64}`}
+            alt="Service Pulse icon"
+            width={40}
+            height={40}
+            style={{ borderRadius: 10 }}
+          />
+          <span>सेवा सूचक</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
@@ -46,7 +57,7 @@ export default function OpenGraphImage() {
               maxWidth: "92%",
             }}
           >
-            Real-time public service experience tracker
+            सार्वजनिक सेवा अनुभव ट्र्याक गर्ने प्लेटफर्म
           </div>
           <div
             style={{
@@ -55,7 +66,7 @@ export default function OpenGraphImage() {
               fontWeight: 600,
             }}
           >
-            सेवा सूचक • Nepal
+            सेवा सूचक • नेपाल
           </div>
         </div>
 
@@ -69,8 +80,8 @@ export default function OpenGraphImage() {
             fontWeight: 600,
           }}
         >
-          <span>Ratings • Wait time • Reports</span>
-          <span>service-pulse.vercel.app</span>
+          <span>रेटिङ • पर्खाइ समय • रिपोर्टहरू</span>
+          <span>sewasuchak.vercel.app</span>
         </div>
       </div>
     ),
