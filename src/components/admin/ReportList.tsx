@@ -62,6 +62,9 @@ export default function ReportList({ reports, constituencies, provinces, distric
         selectedConstituencyId={constituencyId}
         onConstituencyChange={setConstituencyId}
       />
+      <p className="text-sm text-gray-500 mb-3">
+        {filtered.length} {t("admin.showingResults")}
+      </p>
       <div className="space-y-2">
         {filtered.map((r) => (
           <div

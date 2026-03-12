@@ -245,6 +245,7 @@
     "switchToLight": "Switch to light mode",
     "switchToDark": "Switch to dark mode",
     "noServiceTypes": "No service types found.",
+    "showingResults": "results shown",
     "noServicesFiltered": "No services match the selected filters.",
     "noReportsFiltered": "No reports match the selected filters.",
     "noConstituenciesFiltered": "No constituencies match the selected filters.",

@@ -20,6 +20,7 @@ export default function ServiceList({ services, constituencies, provinces, distr
   const [provinceId, setProvinceId] = useState("");
   const [districtId, setDistrictId] = useState("");
   const [constituencyId, setConstituencyId] = useState("");
+  const [serviceType, setServiceType] = useState("");
 
   const handleProvinceChange = (id: string) => {
     setProvinceId(id);
@@ -40,14 +41,27 @@ export default function ServiceList({ services, constituencies, provinces, distr
     });
   }, [constituencies, provinceId, districtId]);
 
+  const serviceTypes = useMemo(
+    () => [...new Set(services.map((service) => service.type).filter(Boolean))].sort(),
+    [services]
+  );
+
   const filtered = useMemo(() => {
-    if (constituencyId) return services.filter((s) => s.constituencyId === constituencyId);
-    if (provinceId || districtId) {
+    let base = services;
+
+    if (constituencyId) {
+      base = base.filter((service) => service.constituencyId === constituencyId);
+    } else if (provinceId || districtId) {
       const ids = new Set(visibleConstituencies.map((c) => c.id));
-      return services.filter((s) => ids.has(s.constituencyId));
+      base = base.filter((service) => ids.has(service.constituencyId));
     }
-    return services;
-  }, [services, visibleConstituencies, provinceId, districtId, constituencyId]);
+
+    if (serviceType) {
+      base = base.filter((service) => service.type === serviceType);
+    }
+
+    return base;
+  }, [services, visibleConstituencies, provinceId, districtId, constituencyId, serviceType]);
 
   return (
     <div>
@@ -61,7 +75,13 @@ export default function ServiceList({ services, constituencies, provinces, distr
         constituencies={visibleConstituencies}
         selectedConstituencyId={constituencyId}
         onConstituencyChange={setConstituencyId}
+        serviceTypes={serviceTypes}
+        selectedServiceType={serviceType}
+        onServiceTypeChange={setServiceType}
       />
+      <p className="text-sm text-gray-500 mb-3">
+        {filtered.length} {t("admin.showingResults")}
+      </p>
       <div className="space-y-2">
         {filtered.map((s) => (
           <div

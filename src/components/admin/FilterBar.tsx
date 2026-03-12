@@ -15,6 +15,10 @@ interface FilterBarProps {
   constituencies?: Constituency[];
   selectedConstituencyId?: string;
   onConstituencyChange?: (id: string) => void;
+  // optional service type filter
+  serviceTypes?: string[];
+  selectedServiceType?: string;
+  onServiceTypeChange?: (type: string) => void;
 }
 
 export default function FilterBar({
@@ -27,6 +31,9 @@ export default function FilterBar({
   constituencies,
   selectedConstituencyId,
   onConstituencyChange,
+  serviceTypes,
+  selectedServiceType,
+  onServiceTypeChange,
 }: FilterBarProps) {
 
   const { t, locale } = useI18n();
@@ -65,6 +72,20 @@ export default function FilterBar({
           <option value="">{t("admin.allConstituencies")}</option>
           {constituencies.map((c) => (
             <option key={c.id} value={c.id}>{locale === "np" ? c.nameNp : c.name}</option>
+          ))}
+        </select>
+      )}
+      {serviceTypes && onServiceTypeChange && (
+        <select
+          value={selectedServiceType ?? ""}
+          onChange={(e) => onServiceTypeChange(e.target.value)}
+          className="border dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white dark:bg-gray-800 dark:text-gray-200"
+        >
+          <option value="">{t("admin.allServices")}</option>
+          {serviceTypes.map((type) => (
+            <option key={type} value={type}>
+              {t(`service.type.${type}`) === `service.type.${type}` ? type : t(`service.type.${type}`)}
+            </option>
           ))}
         </select>
       )}

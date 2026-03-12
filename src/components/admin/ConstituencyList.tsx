@@ -40,6 +40,9 @@ export default function ConstituencyList({ constituencies, provinces, districts,
         onProvinceChange={handleProvinceChange}
         onDistrictChange={setDistrictId}
       />
+      <p className="text-sm text-gray-500 mb-3">
+        {filtered.length} {t("admin.showingResults")}
+      </p>
       <div className="space-y-2">
         {filtered.map((c) => (
           <div
