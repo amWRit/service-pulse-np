@@ -120,6 +120,9 @@
       "fastest": "Fastest service",
       "mostReported": "Most reported service",
       "noData": "Not enough data yet.",
+      "topPercentPrefix": "Top",
+      "topPercentHint": "Percentile rank within this constituency.",
+      "globalRankLabel": "Across all constituencies",
       "badges": {
         "bestRated": "Top pick",
         "fastest": "Quick win",

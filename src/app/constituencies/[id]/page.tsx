@@ -43,6 +43,7 @@ export default function ConstituencyPage() {
   const { t, locale } = useI18n();
   const [data, setData] = useState<Constituency | null>(null);
   const [services, setServices] = useState<Service[]>([]);
+  const [allServices, setAllServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabKey>("insights");
   const [filter, setFilter] = useState("all");
@@ -53,9 +54,11 @@ export default function ConstituencyPage() {
     Promise.all([
       fetch(`/api/constituencies/${id}`).then((r) => r.json()),
       fetch(`/api/services?constituencyId=${id}`).then((r) => r.json()),
-    ]).then(([constituency, svcs]) => {
+      fetch(`/api/services`).then((r) => r.json()),
+    ]).then(([constituency, svcs, globalSvcs]) => {
       setData(constituency);
       setServices(svcs);
+      setAllServices(globalSvcs);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [id]);
@@ -115,6 +118,36 @@ export default function ConstituencyPage() {
   const getServiceName = (service: Service) => (locale === "np" ? service.nameNp : service.name);
   const getTypeLabel = (type: string) => type === "all" ? t("constituency.allTypes") : t(`service.type.${type}`);
   const getTypeColorClass = (type: string) => typeColorMap.get(type) ?? BUBBLE_COLORS[0];
+  const getGlobalRank = (key: string, service: Service) => {
+    if (key === "best-rated") {
+      if (!hasNumber(service.avgRating)) return null;
+      const values = allServices
+        .map((item) => item.avgRating)
+        .filter((value): value is number => hasNumber(value));
+      if (values.length === 0) return null;
+      const betterCount = values.filter((value) => value > service.avgRating!).length;
+      return { rank: betterCount + 1, total: values.length };
+    }
+
+    if (key === "fastest") {
+      if (!hasNumber(service.avgTime)) return null;
+      const values = allServices
+        .map((item) => item.avgTime)
+        .filter((value): value is number => hasNumber(value));
+      if (values.length === 0) return null;
+      const betterCount = values.filter((value) => value < service.avgTime!).length;
+      return { rank: betterCount + 1, total: values.length };
+    }
+
+    const reportCount = service.reportCount ?? 0;
+    if (reportCount <= 0) return null;
+    const values = allServices
+      .map((item) => item.reportCount ?? 0)
+      .filter((value) => value > 0);
+    if (values.length === 0) return null;
+    const betterCount = values.filter((value) => value > reportCount).length;
+    return { rank: betterCount + 1, total: values.length };
+  };
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: "insights", label: t("constituency.tabs.insights") },
@@ -244,6 +277,7 @@ export default function ConstituencyPage() {
       {activeTab === "insights" && (
         <ConstituencyInsightsTab
           t={t}
+          getGlobalRank={getGlobalRank}
           serviceTypes={serviceTypes}
           summaryCards={summaryCards}
           bubbleServices={bubbleServices}

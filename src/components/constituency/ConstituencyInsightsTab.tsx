@@ -5,6 +5,7 @@ import { Service, SummaryCard } from "@/components/constituency/types";
 
 interface ConstituencyInsightsTabProps {
   t: (key: string) => string;
+  getGlobalRank: (key: string, service: Service) => { rank: number; total: number } | null;
   serviceTypes: string[];
   summaryCards: SummaryCard[];
   bubbleServices: Service[];
@@ -26,6 +27,7 @@ function normalize(value: number, min: number, max: number) {
 
 export default function ConstituencyInsightsTab({
   t,
+  getGlobalRank,
   serviceTypes,
   summaryCards,
   bubbleServices,
@@ -64,54 +66,77 @@ export default function ConstituencyInsightsTab({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {summaryCards.map((card) => (
-          <div
-            key={card.key}
-            className="relative rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-          >
-            <div className="pointer-events-none absolute -right-6 -top-8 h-20 w-20 rounded-full bg-orange-200/40 dark:bg-orange-500/20 blur-2xl" />
-            <div className="pointer-events-none absolute -left-6 -bottom-8 h-20 w-20 rounded-full bg-sky-200/40 dark:bg-sky-500/20 blur-2xl" />
-            <div className={`h-1.5 bg-gradient-to-r ${card.accent}`} />
-            <div className="p-5">
-              <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900 px-2.5 py-1 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
-                  <span aria-hidden>{summaryBadgeEmoji(card.key)}</span>
-                  {summaryBadgeLabel(card.key)}
-                </span>
-                <span className="text-lg" aria-hidden>{summaryBadgeEmoji(card.key)}</span>
-              </div>
-              <p className="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-                {card.title}
-              </p>
-              {card.service ? (
-                <>
-                  <Link
-                    href={`/services/${card.service.id}`}
-                    className="mt-3 block text-lg font-bold text-gray-900 dark:text-white hover:text-orange-500 transition-colors"
-                  >
-                    {getServiceName(card.service)}
-                  </Link>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    {t(`service.type.${card.service.type}`)}
-                  </p>
-                  <p className="mt-4 text-2xl font-extrabold text-gray-900 dark:text-white">
-                    {card.value}
-                  </p>
-                  <div className="mt-2 flex items-center justify-between gap-2">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatNumber(card.service.reportCount ?? 0, 0)} {t("service.reports")}
-                    </p>
-                    <div className="h-2 w-16 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
-                      <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-orange-400 to-pink-500" />
-                    </div>
+          (() => {
+            const globalRank = card.service ? getGlobalRank(card.key, card.service) : null;
+            const rankEmoji = !globalRank
+              ? ""
+              : globalRank.rank === 1
+                ? "🥇"
+                : globalRank.rank === 2
+                  ? "🥈"
+                  : globalRank.rank === 3
+                    ? "🥉"
+                    : "🏅";
+
+            return (
+              <div
+                key={card.key}
+                className="relative rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="pointer-events-none absolute -right-6 -top-8 h-20 w-20 rounded-full bg-orange-200/40 dark:bg-orange-500/20 blur-2xl" />
+                <div className="pointer-events-none absolute -left-6 -bottom-8 h-20 w-20 rounded-full bg-sky-200/40 dark:bg-sky-500/20 blur-2xl" />
+                <div className={`h-1.5 bg-gradient-to-r ${card.accent}`} />
+                <div className="p-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900 px-2.5 py-1 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
+                      <span aria-hidden>{summaryBadgeEmoji(card.key)}</span>
+                      {summaryBadgeLabel(card.key)}
+                    </span>
+                    <span className="text-lg" aria-hidden>{summaryBadgeEmoji(card.key)}</span>
                   </div>
-                </>
-              ) : (
-                <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
-                  {t("constituency.summary.noData")}
-                </p>
-              )}
-            </div>
-          </div>
+                  <p className="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {card.title}
+                  </p>
+                  {card.service ? (
+                    <>
+                      <Link
+                        href={`/services/${card.service.id}`}
+                        className="mt-3 block text-lg font-bold text-gray-900 dark:text-white hover:text-orange-500 transition-colors"
+                      >
+                        {getServiceName(card.service)}
+                      </Link>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {t(`service.type.${card.service.type}`)}
+                      </p>
+                      <p className="mt-4 text-2xl font-extrabold text-gray-900 dark:text-white">
+                        {card.value}
+                      </p>
+                      <div className="mt-2 flex items-center justify-between gap-2">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {formatNumber(card.service.reportCount ?? 0, 0)} {t("service.reports")}
+                        </p>
+                      </div>
+                      {globalRank && (
+                        <div className="mt-3 pt-3 border-t border-gray-200/80 dark:border-gray-800/80 flex items-center justify-between gap-2">
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/70 px-2.5 py-1 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
+                            <span aria-hidden>{rankEmoji}</span>
+                            {t("constituency.summary.globalRankLabel")}
+                          </span>
+                          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white px-3 py-1 text-xs font-bold shadow-sm">
+                            #{formatNumber(globalRank.rank, 0)} / {formatNumber(globalRank.total, 0)}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                      {t("constituency.summary.noData")}
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })()
         ))}
       </div>
 
