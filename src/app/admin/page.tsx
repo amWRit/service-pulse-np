@@ -52,7 +52,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (session?.user.role === "admin") loadAll();
-  }, [session]);
+  }, [session?.user.role]);
 
   const loadAll = async () => {
     setLoading(true);
