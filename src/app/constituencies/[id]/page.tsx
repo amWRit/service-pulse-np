@@ -39,6 +39,12 @@ interface Constituency {
   services: Service[];
 }
 
+interface ConstituencyStats {
+  totalReports: number;
+  avgRating: number | null;
+  avgWaitTime: number | null;
+}
+
 export default function ConstituencyPage() {
   const params = useParams();
   const { t, locale } = useI18n();
@@ -111,6 +117,30 @@ export default function ConstituencyPage() {
   const reportMin = reportValues.length ? Math.min(...reportValues) : 0;
   const reportMax = reportValues.length ? Math.max(...reportValues) : 0;
 
+  const totalReports = services.reduce((sum, service) => sum + (service.reportCount ?? 0), 0);
+  const ratingWeightedTotal = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgRating) || !service.reportCount) return sum;
+    return sum + service.avgRating * service.reportCount;
+  }, 0);
+  const ratingWeight = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgRating) || !service.reportCount) return sum;
+    return sum + service.reportCount;
+  }, 0);
+  const timeWeightedTotal = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgTime) || !service.reportCount) return sum;
+    return sum + service.avgTime * service.reportCount;
+  }, 0);
+  const timeWeight = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgTime) || !service.reportCount) return sum;
+    return sum + service.reportCount;
+  }, 0);
+
+  const constituencyStats: ConstituencyStats = {
+    totalReports,
+    avgRating: ratingWeight > 0 ? ratingWeightedTotal / ratingWeight : null,
+    avgWaitTime: timeWeight > 0 ? timeWeightedTotal / timeWeight : null,
+  };
+
   const formatNumber = (value: number, maximumFractionDigits = 1) => new Intl.NumberFormat(
     locale === "np" ? "ne-NP" : "en-US",
     { maximumFractionDigits, minimumFractionDigits: maximumFractionDigits === 0 ? 0 : 1 }
@@ -120,14 +150,16 @@ export default function ConstituencyPage() {
   const getTypeLabel = (type: string) => type === "all" ? t("constituency.allTypes") : t(`service.type.${type}`);
   const getTypeColorClass = (type: string) => typeColorMap.get(type) ?? BUBBLE_COLORS[0];
   const getGlobalRank = (key: string, service: Service) => {
+    const total = allServices.length;
+    if (total === 0) return null;
+
     if (key === "best-rated") {
       if (!hasNumber(service.avgRating)) return null;
       const values = allServices
         .map((item) => item.avgRating)
         .filter((value): value is number => hasNumber(value));
-      if (values.length === 0) return null;
       const betterCount = values.filter((value) => value > service.avgRating!).length;
-      return { rank: betterCount + 1, total: values.length };
+      return { rank: betterCount + 1, total };
     }
 
     if (key === "fastest") {
@@ -135,9 +167,8 @@ export default function ConstituencyPage() {
       const values = allServices
         .map((item) => item.avgTime)
         .filter((value): value is number => hasNumber(value));
-      if (values.length === 0) return null;
       const betterCount = values.filter((value) => value < service.avgTime!).length;
-      return { rank: betterCount + 1, total: values.length };
+      return { rank: betterCount + 1, total };
     }
 
     const reportCount = service.reportCount ?? 0;
@@ -145,9 +176,8 @@ export default function ConstituencyPage() {
     const values = allServices
       .map((item) => item.reportCount ?? 0)
       .filter((value) => value > 0);
-    if (values.length === 0) return null;
     const betterCount = values.filter((value) => value > reportCount).length;
-    return { rank: betterCount + 1, total: values.length };
+    return { rank: betterCount + 1, total };
   };
 
   const tabs: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
@@ -289,6 +319,7 @@ export default function ConstituencyPage() {
         <ConstituencyInsightsTab
           t={t}
           getGlobalRank={getGlobalRank}
+          constituencyStats={constituencyStats}
           serviceTypes={serviceTypes}
           summaryCards={summaryCards}
           bubbleServices={bubbleServices}

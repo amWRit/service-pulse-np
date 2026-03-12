@@ -1,11 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { Service, SummaryCard } from "@/components/constituency/types";
 
 interface ConstituencyInsightsTabProps {
   t: (key: string) => string;
   getGlobalRank: (key: string, service: Service) => { rank: number; total: number } | null;
+  constituencyStats: {
+    totalReports: number;
+    avgRating: number | null;
+    avgWaitTime: number | null;
+  };
   serviceTypes: string[];
   summaryCards: SummaryCard[];
   bubbleServices: Service[];
@@ -28,6 +35,7 @@ function normalize(value: number, min: number, max: number) {
 export default function ConstituencyInsightsTab({
   t,
   getGlobalRank,
+  constituencyStats,
   serviceTypes,
   summaryCards,
   bubbleServices,
@@ -41,6 +49,8 @@ export default function ConstituencyInsightsTab({
   getServiceName,
   getTypeColorClass,
 }: ConstituencyInsightsTabProps) {
+  const [isChartExpanded, setIsChartExpanded] = useState(false);
+
   const summaryBadgeLabel = (key: string) => {
     if (key === "best-rated") return t("constituency.summary.badges.bestRated");
     if (key === "fastest") return t("constituency.summary.badges.fastest");
@@ -117,12 +127,11 @@ export default function ConstituencyInsightsTab({
                         </p>
                       </div>
                       {globalRank && (
-                        <div className="mt-3 pt-3 border-t border-gray-200/80 dark:border-gray-800/80 flex items-center justify-between gap-2">
-                          <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/70 px-2.5 py-1 text-[11px] font-semibold text-gray-600 dark:text-gray-300">
+                        <div className="mt-3 pt-3 border-t border-gray-200/80 dark:border-gray-800/80">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 text-orange-800 dark:bg-orange-950/50 dark:text-orange-200 px-3 py-1.5 text-xs font-bold shadow-sm border border-orange-200/80 dark:border-orange-900/70">
                             <span aria-hidden>{rankEmoji}</span>
                             {t("constituency.summary.globalRankLabel")}
-                          </span>
-                          <span className="inline-flex items-center rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white px-3 py-1 text-xs font-bold shadow-sm">
+                            <span className="text-orange-500/70 dark:text-orange-300/70">•</span>
                             #{formatNumber(globalRank.rank, 0)} / {formatNumber(globalRank.total, 0)}
                           </span>
                         </div>
@@ -140,14 +149,83 @@ export default function ConstituencyInsightsTab({
         ))}
       </div>
 
-      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
-        <div className="mb-4">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-            {t("constituency.chart.title")}
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-            {t("constituency.chart.subtitle")}
-          </p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="rounded-2xl border border-amber-100 dark:border-amber-900/60 bg-amber-50/80 dark:bg-amber-950/30 p-5 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {t("constituency.summary.avgRating")}
+              </p>
+              <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
+                {constituencyStats.avgRating !== null
+                  ? `${formatNumber(constituencyStats.avgRating)} / 5`
+                  : "—"}
+              </p>
+            </div>
+            <span className="text-2xl" aria-hidden>⭐</span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-sky-100 dark:border-sky-900/60 bg-sky-50/80 dark:bg-sky-950/30 p-5 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {t("constituency.summary.avgWaitTime")}
+              </p>
+              <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
+                {constituencyStats.avgWaitTime !== null
+                  ? `${formatNumber(constituencyStats.avgWaitTime)} ${t("home.minutes")}`
+                  : "—"}
+              </p>
+            </div>
+            <span className="text-2xl" aria-hidden>⏱️</span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-orange-100 dark:border-orange-900/60 bg-orange-50/80 dark:bg-orange-950/30 p-5 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {t("constituency.summary.totalReports")}
+              </p>
+              <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
+                {formatNumber(constituencyStats.totalReports, 0)}
+              </p>
+            </div>
+            <span className="text-2xl" aria-hidden>📝</span>
+          </div>
+        </div>
+      </div>
+
+      {isChartExpanded && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+          onClick={() => setIsChartExpanded(false)}
+        />
+      )}
+
+      <div
+        className={`${isChartExpanded ? "fixed inset-4 z-50 overflow-y-auto rounded-3xl" : "rounded-2xl"} border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm`}
+      >
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              {t("constituency.chart.title")}
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              {t("constituency.chart.subtitle")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsChartExpanded((value) => !value)}
+            className="shrink-0 inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:border-orange-300 hover:text-orange-600 dark:hover:border-orange-700 dark:hover:text-orange-300 transition-colors"
+          >
+            {isChartExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            <span className="hidden sm:inline">
+              {isChartExpanded ? t("constituency.chart.closeExpanded") : t("constituency.chart.expand")}
+            </span>
+          </button>
         </div>
 
         <details className="mb-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-950/50 p-3">
@@ -181,7 +259,7 @@ export default function ConstituencyInsightsTab({
 
         {bubbleServices.length > 0 ? (
           <>
-            <div className="relative h-[24rem] rounded-2xl bg-gray-50 dark:bg-gray-950 border border-dashed border-gray-200 dark:border-gray-800 overflow-hidden">
+            <div className={`relative ${isChartExpanded ? "h-[70vh] min-h-[32rem]" : "h-[24rem]"} rounded-2xl bg-gray-50 dark:bg-gray-950 border border-dashed border-gray-200 dark:border-gray-800 overflow-hidden`}>
               <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 pointer-events-none">
                 <div className="bg-emerald-50/35 dark:bg-emerald-950/15" />
                 <div className="bg-orange-50/35 dark:bg-orange-950/15" />

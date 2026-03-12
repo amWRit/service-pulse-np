@@ -9,9 +9,37 @@ import SessionWrapper from "@/components/SessionWrapper";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://service-pulse.vercel.app";
+const socialImage = "/opengraph-image";
+
 export const metadata: Metadata = {
   title: "Service Pulse | सेवा सूचक",
   description: "Real-time public service experience tracker for Nepal",
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Service Pulse | सेवा सूचक",
+    description: "Real-time public service experience tracker for Nepal",
+    url: "/",
+    siteName: "Service Pulse",
+    type: "website",
+    images: [
+      {
+        url: socialImage,
+        width: 1200,
+        height: 630,
+        alt: "Service Pulse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Service Pulse | सेवा सूचक",
+    description: "Real-time public service experience tracker for Nepal",
+    images: [socialImage],
+  },
   icons: {
     icon: [
       { url: "/icons/favicon-16x16.png", sizes: "16x16", type: "image/png" },

@@ -32,6 +32,8 @@
         "title": "National service performance map",
         "subtitle": "Higher bubbles mean better ratings. Bubbles farther right mean longer service time.",
         "legendTitle": "Service types",
+        "expand": "View larger",
+        "closeExpanded": "Close full view",
         "guideTitle": "How to read this chart",
         "guideToggle": "Expand",
         "filters": {
@@ -156,6 +158,9 @@
       "subtitle": "See which services are performing best and where citizens are waiting longer."
     },
     "summary": {
+      "totalReports": "Total reports",
+      "avgWaitTime": "Avg wait time",
+      "avgRating": "Avg rating",
       "bestRated": "Best rated service",
       "fastest": "Fastest service",
       "mostReported": "Most reported service",
@@ -172,6 +177,8 @@
     "chart": {
       "title": "Service performance map",
       "subtitle": "Higher bubbles mean better ratings. Bubbles farther right mean longer service time.",
+      "expand": "View larger",
+      "closeExpanded": "Close full view",
       "guideTitle": "How to read this chart",
       "guideToggle": "Expand",
       "legendTitle": "Service types",
