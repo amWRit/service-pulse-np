@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useI18n } from "@/lib/i18n";
 import { useState, useEffect } from "react";
@@ -9,8 +10,24 @@ import { Activity, Sun, Moon } from "lucide-react";
 export default function Navbar() {
   const { data: session } = useSession();
   const { t, locale, setLocale } = useI18n();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
+
+  const isActivePath = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const desktopLinkClass = (href: string) =>
+    isActivePath(href)
+      ? "text-orange-600 dark:text-orange-400 font-semibold transition-colors"
+      : "text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors";
+
+  const mobileLinkClass = (href: string) =>
+    isActivePath(href)
+      ? "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 rounded-lg px-3 py-2 font-semibold"
+      : "text-gray-700 dark:text-gray-200 font-medium py-2 px-3";
 
   // Helper to apply theme
   function applyTheme(theme: "light" | "dark" | "system") {
@@ -68,19 +85,19 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
+          <Link href="/" className={desktopLinkClass("/")}>
             {t("nav.home")}
           </Link>
-          <Link href="/constituencies" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
+          <Link href="/constituencies" className={desktopLinkClass("/constituencies")}>
             {t("nav.constituencies")}
           </Link>
           {session?.user.role === "admin" && (
-            <Link href="/admin" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
+            <Link href="/admin" className={desktopLinkClass("/admin")}>
               {t("nav.admin")}
             </Link>
           )}
           {session && (
-            <Link href="/badges" className="text-gray-700 dark:text-gray-200 hover:text-orange-600 font-medium transition-colors">
+            <Link href="/badges" className={desktopLinkClass("/badges")}>
               {t("nav.myBadges")}
             </Link>
           )}
@@ -134,13 +151,13 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-700 px-4 py-3 flex flex-col gap-3">
-          <Link href="/" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.home")}</Link>
-          <Link href="/constituencies" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.constituencies")}</Link>
+          <Link href="/" onClick={() => setMenuOpen(false)} className={mobileLinkClass("/")}>{t("nav.home")}</Link>
+          <Link href="/constituencies" onClick={() => setMenuOpen(false)} className={mobileLinkClass("/constituencies")}>{t("nav.constituencies")}</Link>
           {session?.user.role === "admin" && (
-            <Link href="/admin" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.admin")}</Link>
+            <Link href="/admin" onClick={() => setMenuOpen(false)} className={mobileLinkClass("/admin")}>{t("nav.admin")}</Link>
           )}
           {session && (
-            <Link href="/badges" onClick={() => setMenuOpen(false)} className="text-gray-700 dark:text-gray-200 font-medium py-2">{t("nav.myBadges")}</Link>
+            <Link href="/badges" onClick={() => setMenuOpen(false)} className={mobileLinkClass("/badges")}>{t("nav.myBadges")}</Link>
           )}
           <button
             onClick={toggleTheme}

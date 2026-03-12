@@ -207,7 +207,41 @@ export default function AdminPage() {
   };
 
   if (status === "loading" || loading) {
-    return <div className="max-w-5xl mx-auto p-8 text-center text-gray-400">Loading admin panel...</div>;
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-8 animate-pulse">
+        <div className="flex items-center justify-between mb-6 gap-4">
+          <div className="h-8 w-52 rounded-lg bg-orange-100 dark:bg-orange-950/40" />
+          <div className="h-10 w-28 rounded-lg bg-orange-100 dark:bg-orange-950/40" />
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-6 border-b dark:border-gray-700 pb-2">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="h-9 w-28 rounded-lg bg-gray-200 dark:bg-gray-800"
+            />
+          ))}
+        </div>
+
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-800 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between gap-4"
+            >
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-48 rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-3 w-72 rounded bg-gray-100 dark:bg-gray-700/70" />
+              </div>
+              <div className="flex gap-2">
+                <div className="h-8 w-8 rounded-lg bg-gray-200 dark:bg-gray-700" />
+                <div className="h-8 w-8 rounded-lg bg-gray-200 dark:bg-gray-700" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
