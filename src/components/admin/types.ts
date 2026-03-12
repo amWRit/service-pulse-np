@@ -64,7 +64,7 @@ export interface Report {
   isHidden: boolean;
   isModerated: boolean;
   createdAt: string;
-  publicService?: { name: string };
+  publicService?: { name: string; type?: string };
   user?: { name: string } | null;
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { Prisma } from "@prisma/client";
 
 export async function GET(
   _req: Request,
@@ -49,9 +50,30 @@ export async function PUT(
   const body = await req.json();
   const { name, nameNp, imageUrl, description, districtId } = body;
 
+  let province: string | null = null;
+  if (districtId) {
+    const district = await prisma.district.findUnique({
+      where: { id: districtId },
+      select: { province: { select: { name: true } } },
+    });
+
+    if (!district) {
+      return NextResponse.json({ error: "Invalid district" }, { status: 400 });
+    }
+
+    province = district.province.name;
+  }
+
   const constituency = await prisma.constituency.update({
     where: { id },
-    data: { name, nameNp, imageUrl, description, districtId: districtId || null },
+    data: {
+      name,
+      nameNp,
+      imageUrl,
+      description,
+      districtId: districtId || null,
+      province,
+    },
   });
 
   return NextResponse.json(constituency);
@@ -67,7 +89,27 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  await prisma.constituency.delete({ where: { id } });
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.report.deleteMany({ where: { constituencyId: id } });
+      await tx.constituency.delete({ where: { id } });
+    });
 
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2003"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Unable to delete constituency because related records still exist.",
+        },
+        { status: 409 }
+      );
+    }
+
+    throw error;
+  }
 }
