@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { Maximize2, Minimize2 } from "lucide-react";
 import StarRating from "@/components/StarRating";
 import { GlobalServiceEntry, ServiceEntry } from "@/components/home/types";
 
@@ -75,6 +77,8 @@ export default function HomeInsightsTab({
   chartServicesLength,
   getTypeColorClass,
 }: HomeInsightsTabProps) {
+  const [isChartExpanded, setIsChartExpanded] = useState(false);
+
   const formatNumber = (value: number, maximumFractionDigits = 1) => new Intl.NumberFormat(
     locale === "np" ? "ne-NP" : "en-US",
     { maximumFractionDigits, minimumFractionDigits: maximumFractionDigits === 0 ? 0 : 1 }
@@ -232,9 +236,32 @@ export default function HomeInsightsTab({
             ))}
           </div>
 
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("home.insights.chart.title")}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{t("home.insights.chart.subtitle")}</p>
+          {isChartExpanded && (
+            <div
+              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              onClick={() => setIsChartExpanded(false)}
+            />
+          )}
+
+          <div
+            className={`${isChartExpanded ? "fixed inset-4 z-50 overflow-y-auto rounded-3xl" : "rounded-2xl"} border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm`}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("home.insights.chart.title")}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{t("home.insights.chart.subtitle")}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsChartExpanded((value) => !value)}
+                className="shrink-0 inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:border-orange-300 hover:text-orange-600 dark:hover:border-orange-700 dark:hover:text-orange-300 transition-colors"
+              >
+                {isChartExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                <span className="hidden sm:inline">
+                  {isChartExpanded ? t("home.insights.chart.closeExpanded") : t("home.insights.chart.expand")}
+                </span>
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 mb-4">
               <label className="block">
@@ -284,17 +311,19 @@ export default function HomeInsightsTab({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-              <div className="rounded-2xl border border-orange-100 dark:border-orange-900/60 bg-orange-50/80 dark:bg-orange-950/30 p-4 shadow-sm">
+              <div className="rounded-2xl border border-amber-100 dark:border-amber-900/60 bg-amber-50/80 dark:bg-amber-950/30 p-4 shadow-sm">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                      {t("home.totalReports")}
+                      {t("home.avgRating")}
                     </p>
                     <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
-                      {formatNumber(filteredTotalReports, 0)}
+                      {filteredAvgRating !== null
+                        ? `${formatNumber(filteredAvgRating)} / 5`
+                        : "—"}
                     </p>
                   </div>
-                  <span className="text-2xl" aria-hidden>📣</span>
+                  <span className="text-2xl" aria-hidden>⭐</span>
                 </div>
               </div>
 
@@ -314,19 +343,17 @@ export default function HomeInsightsTab({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-amber-100 dark:border-amber-900/60 bg-amber-50/80 dark:bg-amber-950/30 p-4 shadow-sm">
+              <div className="rounded-2xl border border-orange-100 dark:border-orange-900/60 bg-orange-50/80 dark:bg-orange-950/30 p-4 shadow-sm">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                      {t("home.avgRating")}
+                      {t("home.totalReports")}
                     </p>
                     <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
-                      {filteredAvgRating !== null
-                        ? `${formatNumber(filteredAvgRating)} / 5`
-                        : "—"}
+                      {formatNumber(filteredTotalReports, 0)}
                     </p>
                   </div>
-                  <span className="text-2xl" aria-hidden>⭐</span>
+                  <span className="text-2xl" aria-hidden>📣</span>
                 </div>
               </div>
             </div>
@@ -354,7 +381,7 @@ export default function HomeInsightsTab({
 
             {filteredChartServices.length > 0 ? (
               <>
-                <div className="relative h-[24rem] rounded-2xl bg-gray-50 dark:bg-gray-950 border border-dashed border-gray-200 dark:border-gray-800 overflow-hidden">
+                <div className={`relative ${isChartExpanded ? "h-[70vh] min-h-[32rem]" : "h-[24rem]"} rounded-2xl bg-gray-50 dark:bg-gray-950 border border-dashed border-gray-200 dark:border-gray-800 overflow-hidden`}>
                   <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 pointer-events-none">
                     <div className="bg-emerald-50/35 dark:bg-emerald-950/15" />
                     <div className="bg-orange-50/35 dark:bg-orange-950/15" />
