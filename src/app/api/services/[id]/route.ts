@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { ServiceType } from "@prisma/client";
 
 export async function GET(
   _req: Request,
@@ -57,7 +56,7 @@ export async function PUT(
     data: {
       name: body.name,
       nameNp: body.nameNp,
-      type: (body.type as ServiceType) || "other",
+      type: (body.type as string) || "other",
       location: body.location,
       description: body.description,
       descriptionNp: body.descriptionNp,

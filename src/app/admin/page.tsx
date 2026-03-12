@@ -13,12 +13,15 @@ import ProvinceList from "@/components/admin/ProvinceList";
 import ProvinceModal from "@/components/admin/ProvinceModal";
 import DistrictList from "@/components/admin/DistrictList";
 import DistrictModal from "@/components/admin/DistrictModal";
-import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData } from "@/components/admin/types";
+import ServiceTypeList from "@/components/admin/ServiceTypeList";
+import ServiceTypeModal from "@/components/admin/ServiceTypeModal";
+import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData, ServiceTypeConfig } from "@/components/admin/types";
 
-type Tab = "constituencies" | "services" | "reports" | "provinces" | "districts";
+type Tab = "constituencies" | "services" | "serviceTypes" | "reports" | "provinces" | "districts";
 type Modal =
   | "addConstituency" | "editConstituency"
   | "addService" | "editService"
+  | "addServiceType" | "editServiceType"
   | "addProvince" | "editProvince"
   | "addDistrict" | "editDistrict"
   | null;
@@ -33,10 +36,12 @@ export default function AdminPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
+  const [serviceTypes, setServiceTypes] = useState<ServiceTypeConfig[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<Modal>(null);
   const [editingConstituency, setEditingConstituency] = useState<Constituency | null>(null);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [editingServiceType, setEditingServiceType] = useState<ServiceTypeConfig | null>(null);
   const [editingProvince, setEditingProvince] = useState<Province | null>(null);
   const [editingDistrict, setEditingDistrict] = useState<District | null>(null);
 
@@ -51,18 +56,20 @@ export default function AdminPage() {
 
   const loadAll = async () => {
     setLoading(true);
-    const [c, s, r, p, d] = await Promise.all([
+    const [c, s, r, p, d, st] = await Promise.all([
       fetch("/api/constituencies").then((x) => x.json()),
       fetch("/api/services").then((x) => x.json()),
       fetch("/api/reports").then((x) => x.json()),
       fetch("/api/provinces").then((x) => x.json()),
       fetch("/api/districts").then((x) => x.json()),
+      fetch("/api/service-types").then((x) => x.json()),
     ]);
     setConstituencies(c);
     setServices(s);
     setReports(r);
     setProvinces(p);
     setDistricts(d);
+    setServiceTypes(st);
     setLoading(false);
   };
 
@@ -158,10 +165,43 @@ export default function AdminPage() {
     loadAll();
   };
 
+  const submitServiceType = async (form: { slug: string; name: string; nameNp: string; icon: string }) => {
+    const url = editingServiceType
+      ? `/api/service-types/${editingServiceType.id}`
+      : "/api/service-types";
+    const res = await fetch(url, {
+      method: editingServiceType ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data?.error || t("admin.failedSaveServiceType"));
+      return;
+    }
+
+    setModal(null);
+    setEditingServiceType(null);
+    loadAll();
+  };
+
+  const deleteServiceType = async (id: string) => {
+    if (!confirm(t("admin.confirmDelete"))) return;
+    const res = await fetch(`/api/service-types/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data?.error || t("admin.failedDeleteServiceType"));
+      return;
+    }
+    loadAll();
+  };
+
   const closeModal = () => {
     setModal(null);
     setEditingConstituency(null);
     setEditingService(null);
+    setEditingServiceType(null);
     setEditingProvince(null);
     setEditingDistrict(null);
   };
@@ -179,15 +219,20 @@ export default function AdminPage() {
             onClick={() => {
               if (tab === "constituencies") setModal("addConstituency");
               else if (tab === "services") setModal("addService");
+              else if (tab === "serviceTypes") setModal("addServiceType");
               else if (tab === "provinces") setModal("addProvince");
               else if (tab === "districts") setModal("addDistrict");
             }}
             className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
           >
-            + {tab === "constituencies" ? t("admin.addConstituency")
-               : tab === "services" ? t("admin.addService")
-               : tab === "provinces" ? "Add Province"
-               : "Add District"}
+            <span aria-hidden="true">+</span>
+            <span className="hidden sm:inline sm:ml-1">
+              {tab === "constituencies" ? t("admin.addConstituency")
+                 : tab === "services" ? t("admin.addService")
+                 : tab === "serviceTypes" ? t("admin.addServiceType")
+                 : tab === "provinces" ? t("admin.addProvince")
+                 : t("admin.addDistrict")}
+            </span>
           </button>
         )}
       </div>
@@ -197,6 +242,7 @@ export default function AdminPage() {
         {([
           { key: "constituencies", label: t("admin.constituencies"), count: constituencies.length },
           { key: "services", label: t("admin.services"), count: services.length },
+          { key: "serviceTypes", label: t("admin.serviceTypes"), count: serviceTypes.length },
           { key: "reports", label: t("admin.reports"), count: reports.length },
           { key: "provinces", label: t("admin.provinces"), count: provinces.length },
           { key: "districts", label: t("admin.districts"), count: districts.length },
@@ -231,6 +277,17 @@ export default function AdminPage() {
           districts={districts}
           onEdit={openEditService}
           onDelete={deleteService}
+        />
+      )}
+
+      {tab === "serviceTypes" && (
+        <ServiceTypeList
+          serviceTypes={serviceTypes}
+          onEdit={(serviceType) => {
+            setEditingServiceType(serviceType);
+            setModal("editServiceType");
+          }}
+          onDelete={deleteServiceType}
         />
       )}
 
@@ -270,6 +327,23 @@ export default function AdminPage() {
         />
       )}
 
+      {(modal === "addServiceType" || modal === "editServiceType") && (
+        <ServiceTypeModal
+          initialData={
+            editingServiceType
+              ? {
+                  slug: editingServiceType.slug,
+                  name: editingServiceType.name,
+                  nameNp: editingServiceType.nameNp,
+                  icon: editingServiceType.icon,
+                }
+              : undefined
+          }
+          onSubmit={submitServiceType}
+          onClose={closeModal}
+        />
+      )}
+
       {(modal === "addConstituency" || modal === "editConstituency") && (
         <AddConstituencyModal
           provinces={provinces}
@@ -293,6 +367,7 @@ export default function AdminPage() {
       {(modal === "addService" || modal === "editService") && (
         <AddServiceModal
           constituencies={constituencies}
+          serviceTypes={serviceTypes}
           initialData={
             editingService
               ? {

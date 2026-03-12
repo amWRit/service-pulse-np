@@ -1,4 +1,4 @@
-import { PrismaClient, ServiceType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -141,6 +141,15 @@ async function main() {
   const constituency = await prisma.constituency.findUnique({ where: { id: "const-kathmandu-6" } });
   if (!constituency) throw new Error("Kathmandu-6 constituency not found");
 
+  const governmentOfficeType = await prisma.serviceType.findUnique({
+    where: { slug: "government_office" },
+    select: { slug: true },
+  });
+
+  if (!governmentOfficeType) {
+    throw new Error('Service type "government_office" not found. Run the main seed first.');
+  }
+
   for (const ward of WARDS) {
     const id = `ward-${ward.municipality.replace(/\s+/g, "-").toLowerCase()}-${ward.ward}`;
     await prisma.publicService.upsert({
@@ -148,7 +157,7 @@ async function main() {
       update: {
         name: ward.name,
         nameNp: ward.nameNp,
-        type: "government_office",
+        type: governmentOfficeType.slug,
         location: ward.location,
         description: `Ward office for ${ward.municipality} Ward ${ward.ward}`,
         descriptionNp: `${ward.municipality} वडा ${ward.ward} को वडा कार्यालय`,
@@ -158,7 +167,7 @@ async function main() {
         id,
         name: ward.name,
         nameNp: ward.nameNp,
-        type: "government_office",
+        type: governmentOfficeType.slug,
         location: ward.location,
         description: `Ward office for ${ward.municipality} Ward ${ward.ward}`,
         descriptionNp: `${ward.municipality} वडा ${ward.ward} को वडा कार्यालय`,

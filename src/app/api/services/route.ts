@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { ServiceType } from "@prisma/client";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -48,7 +47,7 @@ export async function POST(req: Request) {
     data: {
       name,
       nameNp,
-      type: (type as ServiceType) || "other",
+      type: (type as string) || "other",
       location,
       description,
       descriptionNp,

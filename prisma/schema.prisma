@@ -16,15 +16,12 @@ enum Role {
   citizen
 }
 
-enum ServiceType {
-  hospital
-  government_office
-  transport
-  education
-  utility
-  police
-  bank
-  other
+model ServiceType {
+  id     String @id @default(cuid())
+  slug   String @unique // e.g. "hospital", "government_office"
+  name   String         // English display name
+  nameNp String         // Nepali display name
+  icon   String @default("🏢")
 }
 
 model User {
@@ -114,7 +111,7 @@ model PublicService {
   id             String       @id @default(cuid())
   name           String
   nameNp         String
-  type           ServiceType  @default(other)
+  type           String       @default("other")
   location       String?
   description    String?
   descriptionNp  String?
