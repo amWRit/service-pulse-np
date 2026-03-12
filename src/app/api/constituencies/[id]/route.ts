@@ -50,9 +50,30 @@ export async function PUT(
   const body = await req.json();
   const { name, nameNp, imageUrl, description, districtId } = body;
 
+  let province: string | null = null;
+  if (districtId) {
+    const district = await prisma.district.findUnique({
+      where: { id: districtId },
+      select: { province: { select: { name: true } } },
+    });
+
+    if (!district) {
+      return NextResponse.json({ error: "Invalid district" }, { status: 400 });
+    }
+
+    province = district.province.name;
+  }
+
   const constituency = await prisma.constituency.update({
     where: { id },
-    data: { name, nameNp, imageUrl, description, districtId: districtId || null },
+    data: {
+      name,
+      nameNp,
+      imageUrl,
+      description,
+      districtId: districtId || null,
+      province,
+    },
   });
 
   return NextResponse.json(constituency);

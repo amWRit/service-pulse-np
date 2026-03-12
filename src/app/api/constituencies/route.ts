@@ -39,8 +39,29 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
   }
 
+  let province: string | null = null;
+  if (districtId) {
+    const district = await prisma.district.findUnique({
+      where: { id: districtId },
+      select: { province: { select: { name: true } } },
+    });
+
+    if (!district) {
+      return NextResponse.json({ error: "Invalid district" }, { status: 400 });
+    }
+
+    province = district.province.name;
+  }
+
   const constituency = await prisma.constituency.create({
-    data: { name, nameNp, imageUrl, description, districtId: districtId || null },
+    data: {
+      name,
+      nameNp,
+      imageUrl,
+      description,
+      districtId: districtId || null,
+      province,
+    },
   });
 
   return NextResponse.json(constituency, { status: 201 });

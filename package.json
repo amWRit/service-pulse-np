@@ -10,6 +10,7 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:seed:constituencies:no-kathmandu": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.constituencies.except-kathmandu.ts",
+    "db:seed:kathmandu-wards": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.kathmandu.wards.ts",
     "db:studio": "prisma studio",
     "db:migrate": "prisma migrate dev",
     "postinstall": "prisma generate"
