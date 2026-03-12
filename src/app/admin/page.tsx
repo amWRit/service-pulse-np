@@ -13,12 +13,15 @@ import ProvinceList from "@/components/admin/ProvinceList";
 import ProvinceModal from "@/components/admin/ProvinceModal";
 import DistrictList from "@/components/admin/DistrictList";
 import DistrictModal from "@/components/admin/DistrictModal";
+import ServiceTypeList from "@/components/admin/ServiceTypeList";
+import ServiceTypeModal from "@/components/admin/ServiceTypeModal";
 import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData, ServiceTypeConfig } from "@/components/admin/types";
 
-type Tab = "constituencies" | "services" | "reports" | "provinces" | "districts";
+type Tab = "constituencies" | "services" | "serviceTypes" | "reports" | "provinces" | "districts";
 type Modal =
   | "addConstituency" | "editConstituency"
   | "addService" | "editService"
+  | "addServiceType" | "editServiceType"
   | "addProvince" | "editProvince"
   | "addDistrict" | "editDistrict"
   | null;
@@ -38,6 +41,7 @@ export default function AdminPage() {
   const [modal, setModal] = useState<Modal>(null);
   const [editingConstituency, setEditingConstituency] = useState<Constituency | null>(null);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [editingServiceType, setEditingServiceType] = useState<ServiceTypeConfig | null>(null);
   const [editingProvince, setEditingProvince] = useState<Province | null>(null);
   const [editingDistrict, setEditingDistrict] = useState<District | null>(null);
 
@@ -161,10 +165,43 @@ export default function AdminPage() {
     loadAll();
   };
 
+  const submitServiceType = async (form: { slug: string; name: string; nameNp: string; icon: string }) => {
+    const url = editingServiceType
+      ? `/api/service-types/${editingServiceType.id}`
+      : "/api/service-types";
+    const res = await fetch(url, {
+      method: editingServiceType ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data?.error || t("admin.failedSaveServiceType"));
+      return;
+    }
+
+    setModal(null);
+    setEditingServiceType(null);
+    loadAll();
+  };
+
+  const deleteServiceType = async (id: string) => {
+    if (!confirm(t("admin.confirmDelete"))) return;
+    const res = await fetch(`/api/service-types/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data?.error || t("admin.failedDeleteServiceType"));
+      return;
+    }
+    loadAll();
+  };
+
   const closeModal = () => {
     setModal(null);
     setEditingConstituency(null);
     setEditingService(null);
+    setEditingServiceType(null);
     setEditingProvince(null);
     setEditingDistrict(null);
   };
@@ -182,6 +219,7 @@ export default function AdminPage() {
             onClick={() => {
               if (tab === "constituencies") setModal("addConstituency");
               else if (tab === "services") setModal("addService");
+              else if (tab === "serviceTypes") setModal("addServiceType");
               else if (tab === "provinces") setModal("addProvince");
               else if (tab === "districts") setModal("addDistrict");
             }}
@@ -189,8 +227,9 @@ export default function AdminPage() {
           >
             + {tab === "constituencies" ? t("admin.addConstituency")
                : tab === "services" ? t("admin.addService")
-               : tab === "provinces" ? "Add Province"
-               : "Add District"}
+               : tab === "serviceTypes" ? t("admin.addServiceType")
+               : tab === "provinces" ? t("admin.addProvince")
+               : t("admin.addDistrict")}
           </button>
         )}
       </div>
@@ -200,6 +239,7 @@ export default function AdminPage() {
         {([
           { key: "constituencies", label: t("admin.constituencies"), count: constituencies.length },
           { key: "services", label: t("admin.services"), count: services.length },
+          { key: "serviceTypes", label: t("admin.serviceTypes"), count: serviceTypes.length },
           { key: "reports", label: t("admin.reports"), count: reports.length },
           { key: "provinces", label: t("admin.provinces"), count: provinces.length },
           { key: "districts", label: t("admin.districts"), count: districts.length },
@@ -237,6 +277,17 @@ export default function AdminPage() {
         />
       )}
 
+      {tab === "serviceTypes" && (
+        <ServiceTypeList
+          serviceTypes={serviceTypes}
+          onEdit={(serviceType) => {
+            setEditingServiceType(serviceType);
+            setModal("editServiceType");
+          }}
+          onDelete={deleteServiceType}
+        />
+      )}
+
       {tab === "reports" && (
         <ReportList
           reports={reports}
@@ -269,6 +320,23 @@ export default function AdminPage() {
           provinces={provinces}
           initialData={editingDistrict ? { name: editingDistrict.name, nameNp: editingDistrict.nameNp, provinceId: editingDistrict.provinceId } : undefined}
           onSubmit={submitDistrict}
+          onClose={closeModal}
+        />
+      )}
+
+      {(modal === "addServiceType" || modal === "editServiceType") && (
+        <ServiceTypeModal
+          initialData={
+            editingServiceType
+              ? {
+                  slug: editingServiceType.slug,
+                  name: editingServiceType.name,
+                  nameNp: editingServiceType.nameNp,
+                  icon: editingServiceType.icon,
+                }
+              : undefined
+          }
+          onSubmit={submitServiceType}
           onClose={closeModal}
         />
       )}

@@ -4,6 +4,7 @@ export interface ServiceTypeConfig {
   name: string;
   nameNp: string;
   icon: string;
+  _count?: { services: number };
 }
 
 export interface Province {
