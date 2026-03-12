@@ -2,18 +2,7 @@
 
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
-import type { Constituency, ServiceFormData } from "./types";
-
-const SERVICE_TYPES = [
-  "hospital",
-  "government_office",
-  "transport",
-  "education",
-  "utility",
-  "police",
-  "bank",
-  "other",
-];
+import type { Constituency, ServiceFormData, ServiceTypeConfig } from "./types";
 
 const TEXT_FIELDS: { label: string; key: keyof ServiceFormData }[] = [
   { label: "Name (English)", key: "name" },
@@ -35,12 +24,13 @@ const EMPTY_FORM: ServiceFormData = {
 
 interface AddServiceModalProps {
   constituencies: Constituency[];
+  serviceTypes: ServiceTypeConfig[];
   initialData?: ServiceFormData;
   onSubmit: (form: ServiceFormData) => Promise<void>;
   onClose: () => void;
 }
 
-export default function AddServiceModal({ constituencies, initialData, onSubmit, onClose }: AddServiceModalProps) {
+export default function AddServiceModal({ constituencies, serviceTypes, initialData, onSubmit, onClose }: AddServiceModalProps) {
   const { t } = useI18n();
   const [form, setForm] = useState<ServiceFormData>(initialData ?? EMPTY_FORM);
   const isEditing = !!initialData;
@@ -75,9 +65,9 @@ export default function AddServiceModal({ constituencies, initialData, onSubmit,
               onChange={(e) => setForm({ ...form, type: e.target.value })}
               className="mt-1 w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
             >
-              {SERVICE_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
+              {serviceTypes.map((st) => (
+                <option key={st.slug} value={st.slug}>
+                  {st.icon} {st.name}
                 </option>
               ))}
             </select>

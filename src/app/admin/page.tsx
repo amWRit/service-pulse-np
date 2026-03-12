@@ -13,7 +13,7 @@ import ProvinceList from "@/components/admin/ProvinceList";
 import ProvinceModal from "@/components/admin/ProvinceModal";
 import DistrictList from "@/components/admin/DistrictList";
 import DistrictModal from "@/components/admin/DistrictModal";
-import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData } from "@/components/admin/types";
+import type { Constituency, Service, Report, Province, District, ConstituencyFormData, ServiceFormData, ServiceTypeConfig } from "@/components/admin/types";
 
 type Tab = "constituencies" | "services" | "reports" | "provinces" | "districts";
 type Modal =
@@ -33,6 +33,7 @@ export default function AdminPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
+  const [serviceTypes, setServiceTypes] = useState<ServiceTypeConfig[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<Modal>(null);
   const [editingConstituency, setEditingConstituency] = useState<Constituency | null>(null);
@@ -51,18 +52,20 @@ export default function AdminPage() {
 
   const loadAll = async () => {
     setLoading(true);
-    const [c, s, r, p, d] = await Promise.all([
+    const [c, s, r, p, d, st] = await Promise.all([
       fetch("/api/constituencies").then((x) => x.json()),
       fetch("/api/services").then((x) => x.json()),
       fetch("/api/reports").then((x) => x.json()),
       fetch("/api/provinces").then((x) => x.json()),
       fetch("/api/districts").then((x) => x.json()),
+      fetch("/api/service-types").then((x) => x.json()),
     ]);
     setConstituencies(c);
     setServices(s);
     setReports(r);
     setProvinces(p);
     setDistricts(d);
+    setServiceTypes(st);
     setLoading(false);
   };
 
@@ -293,6 +296,7 @@ export default function AdminPage() {
       {(modal === "addService" || modal === "editService") && (
         <AddServiceModal
           constituencies={constituencies}
+          serviceTypes={serviceTypes}
           initialData={
             editingService
               ? {

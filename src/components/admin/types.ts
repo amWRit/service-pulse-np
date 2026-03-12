@@ -1,3 +1,11 @@
+export interface ServiceTypeConfig {
+  id: string;
+  slug: string;
+  name: string;
+  nameNp: string;
+  icon: string;
+}
+
 export interface Province {
   id: string;
   name: string;

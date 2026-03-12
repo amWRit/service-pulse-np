@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { seedServiceTypes } from "./seed.service-types.js";
 
 const prisma = new PrismaClient();
 
@@ -121,6 +122,8 @@ const PROVINCES: { id: string; name: string; nameNp: string; districts: { id: st
 
 async function main() {
   console.log("🌱 Seeding database...");
+
+  await seedServiceTypes(prisma);
 
   // ── Provinces + Districts ──────────────────────────────────────────────────
   for (const prov of PROVINCES) {
@@ -405,7 +408,7 @@ async function main() {
   const reportData = [
     { publicServiceId: "svc-bir", constituencyId: "const-kathmandu-1", serviceTimeMinutes: 90, rating: 2, comment: "Very long wait time. Need better management.", userId: citizen.id },
     { publicServiceId: "svc-bir", constituencyId: "const-kathmandu-1", serviceTimeMinutes: 120, rating: 2, comment: "Overcrowded. Waited 2 hours.", userId: null },
-    { publicServiceId: "svc-bir", constituencyId: "const-kathmandu-1", serviceTimeMinutes: 45, rating: 3, comment: "Average experience.", userId: citizen.id },
+    { publicServiceId: "svc-bir", constituencyId: "const-kathmandu-1", serviceTimeMinutes: 45, rating: 3, comment: "Average experience.", userId: null },
     { publicServiceId: "svc-cdo-ktm", constituencyId: "const-kathmandu-1", serviceTimeMinutes: 30, rating: 3, comment: "Staff were helpful but slow.", userId: citizen.id },
     { publicServiceId: "svc-cdo-ktm", constituencyId: "const-kathmandu-1", serviceTimeMinutes: 20, rating: 4, comment: "Reasonably fast service today.", userId: null },
     { publicServiceId: "svc-passport-ktm", constituencyId: "const-kathmandu-1", serviceTimeMinutes: 180, rating: 1, comment: "Terrible! Waited 3 hours. System was down.", userId: citizen.id },
