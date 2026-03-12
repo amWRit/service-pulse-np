@@ -320,7 +320,7 @@ export default function AdminPage() {
         counts={{
           constituencies: constituencies.length,
           services: services.length,
-          serviceRequests: serviceRequests.length,
+          serviceRequests: serviceRequests.filter((r) => r.status === "pending").length,
           serviceTypes: serviceTypes.length,
           reports: reports.length,
           provinces: provinces.length,
