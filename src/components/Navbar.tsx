@@ -149,6 +149,12 @@ export default function Navbar() {
           >
             {theme === "dark" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
+          <button
+            onClick={() => setLocale(locale === "en" ? "np" : "en")}
+            className="text-xs bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-full px-3 py-1 font-semibold transition-colors w-fit"
+          >
+            {locale === "en" ? "नेपाली" : "English"}
+          </button>
           {session ? (
             <button
               onClick={() => signOut({ callbackUrl: "/" })}

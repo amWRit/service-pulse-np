@@ -31,12 +31,12 @@ export default function HomeLeaderboardTab({
   return (
     <>
       <div className="mb-6">
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-4 gap-2 w-full">
           {leaderboardTabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setLeaderboardTab(tab)}
-              className={`px-3 sm:px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors inline-flex items-center gap-2 ${
+              className={`w-full px-3 sm:px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors inline-flex items-center justify-center gap-2 ${
                 leaderboardTab === tab
                   ? "bg-orange-500 text-white border-orange-500 shadow-sm"
                   : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500"
@@ -50,6 +50,9 @@ export default function HomeLeaderboardTab({
             </button>
           ))}
         </div>
+        <p className="mt-2 sm:hidden text-xs font-semibold text-gray-500 dark:text-gray-400">
+          {t(`leaderboard.${leaderboardTab}`)}
+        </p>
       </div>
 
       <div className="mb-5" />
