@@ -24,25 +24,23 @@ export default function ConstituencyServicesTab({
 }: ConstituencyServicesTabProps) {
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <span className="inline-flex items-center rounded-full border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200">
           {filtered.length} {t("nav.services")}
         </span>
-        <div className="flex flex-wrap gap-2">
-          {serviceTypes.map((type) => (
-            <button
-              key={type}
-              onClick={() => setFilter(type)}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-                filter === type
-                  ? "bg-orange-500 text-white border-orange-500"
-                  : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-orange-300"
-              }`}
-            >
-              {getTypeLabel(type)}
-            </button>
-          ))}
-        </div>
+        <label className="block min-w-[14rem]">
+          <select
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+            className="mt-1 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-700 dark:text-gray-200"
+          >
+            {serviceTypes.map((type) => (
+              <option key={type} value={type}>
+                {getTypeLabel(type)}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {filtered.length > 0 ? (
