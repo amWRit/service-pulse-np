@@ -75,6 +75,11 @@ export default function HomeInsightsTab({
   chartServicesLength,
   getTypeColorClass,
 }: HomeInsightsTabProps) {
+  const formatNumber = (value: number, maximumFractionDigits = 1) => new Intl.NumberFormat(
+    locale === "np" ? "ne-NP" : "en-US",
+    { maximumFractionDigits, minimumFractionDigits: maximumFractionDigits === 0 ? 0 : 1 }
+  ).format(value);
+
   const metricCards = [
     {
       key: "constituencies",
@@ -122,6 +127,30 @@ export default function HomeInsightsTab({
       valueColor: "text-fuchsia-700 dark:text-fuchsia-300",
     },
   ];
+
+  const filteredTotalReports = filteredChartServices.reduce(
+    (sum, service) => sum + (service.reportCount ?? 0),
+    0
+  );
+  const filteredTimeWeight = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgTime == null) return sum;
+    return sum + service.reportCount;
+  }, 0);
+  const filteredTimeTotal = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgTime == null) return sum;
+    return sum + service.avgTime * service.reportCount;
+  }, 0);
+  const filteredRatingWeight = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgRating == null) return sum;
+    return sum + service.reportCount;
+  }, 0);
+  const filteredRatingTotal = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgRating == null) return sum;
+    return sum + service.avgRating * service.reportCount;
+  }, 0);
+
+  const filteredAvgWait = filteredTimeWeight > 0 ? filteredTimeTotal / filteredTimeWeight : null;
+  const filteredAvgRating = filteredRatingWeight > 0 ? filteredRatingTotal / filteredRatingWeight : null;
 
   return (
     <div className="space-y-6">
@@ -252,6 +281,54 @@ export default function HomeInsightsTab({
                   ))}
                 </select>
               </label>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div className="rounded-2xl border border-orange-100 dark:border-orange-900/60 bg-orange-50/80 dark:bg-orange-950/30 p-4 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {t("home.totalReports")}
+                    </p>
+                    <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
+                      {formatNumber(filteredTotalReports, 0)}
+                    </p>
+                  </div>
+                  <span className="text-2xl" aria-hidden>📣</span>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-sky-100 dark:border-sky-900/60 bg-sky-50/80 dark:bg-sky-950/30 p-4 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {t("home.avgWaitTime")}
+                    </p>
+                    <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
+                      {filteredAvgWait !== null
+                        ? `${formatNumber(filteredAvgWait)} ${t("home.minutes")}`
+                        : "—"}
+                    </p>
+                  </div>
+                  <span className="text-2xl" aria-hidden>⏱️</span>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-amber-100 dark:border-amber-900/60 bg-amber-50/80 dark:bg-amber-950/30 p-4 shadow-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {t("home.avgRating")}
+                    </p>
+                    <p className="mt-2 text-2xl font-extrabold text-gray-900 dark:text-white">
+                      {filteredAvgRating !== null
+                        ? `${formatNumber(filteredAvgRating)} / 5`
+                        : "—"}
+                    </p>
+                  </div>
+                  <span className="text-2xl" aria-hidden>⭐</span>
+                </div>
+              </div>
             </div>
 
             <details className="mb-4 mt-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-950/50 p-3">

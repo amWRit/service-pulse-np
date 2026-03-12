@@ -156,6 +156,9 @@
       "subtitle": "See which services are performing best and where citizens are waiting longer."
     },
     "summary": {
+      "totalReports": "Total reports",
+      "avgWaitTime": "Avg wait time",
+      "avgRating": "Avg rating",
       "bestRated": "Best rated service",
       "fastest": "Fastest service",
       "mostReported": "Most reported service",

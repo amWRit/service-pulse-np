@@ -39,6 +39,12 @@ interface Constituency {
   services: Service[];
 }
 
+interface ConstituencyStats {
+  totalReports: number;
+  avgRating: number | null;
+  avgWaitTime: number | null;
+}
+
 export default function ConstituencyPage() {
   const params = useParams();
   const { t, locale } = useI18n();
@@ -110,6 +116,30 @@ export default function ConstituencyPage() {
   const ratingMax = ratingValues.length ? Math.max(...ratingValues) : 0;
   const reportMin = reportValues.length ? Math.min(...reportValues) : 0;
   const reportMax = reportValues.length ? Math.max(...reportValues) : 0;
+
+  const totalReports = services.reduce((sum, service) => sum + (service.reportCount ?? 0), 0);
+  const ratingWeightedTotal = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgRating) || !service.reportCount) return sum;
+    return sum + service.avgRating * service.reportCount;
+  }, 0);
+  const ratingWeight = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgRating) || !service.reportCount) return sum;
+    return sum + service.reportCount;
+  }, 0);
+  const timeWeightedTotal = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgTime) || !service.reportCount) return sum;
+    return sum + service.avgTime * service.reportCount;
+  }, 0);
+  const timeWeight = services.reduce((sum, service) => {
+    if (!hasNumber(service.avgTime) || !service.reportCount) return sum;
+    return sum + service.reportCount;
+  }, 0);
+
+  const constituencyStats: ConstituencyStats = {
+    totalReports,
+    avgRating: ratingWeight > 0 ? ratingWeightedTotal / ratingWeight : null,
+    avgWaitTime: timeWeight > 0 ? timeWeightedTotal / timeWeight : null,
+  };
 
   const formatNumber = (value: number, maximumFractionDigits = 1) => new Intl.NumberFormat(
     locale === "np" ? "ne-NP" : "en-US",
@@ -289,6 +319,7 @@ export default function ConstituencyPage() {
         <ConstituencyInsightsTab
           t={t}
           getGlobalRank={getGlobalRank}
+          constituencyStats={constituencyStats}
           serviceTypes={serviceTypes}
           summaryCards={summaryCards}
           bubbleServices={bubbleServices}
