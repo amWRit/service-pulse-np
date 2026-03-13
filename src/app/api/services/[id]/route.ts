@@ -31,11 +31,55 @@ export async function GET(
     _count: { id: true },
   });
 
+  const insightReports = await prisma.report.findMany({
+    where: { publicServiceId: id, isHidden: false },
+    orderBy: { createdAt: "asc" },
+    select: {
+      createdAt: true,
+      rating: true,
+      serviceTimeMinutes: true,
+    },
+  });
+
+  const constituencyAgg = await prisma.report.aggregate({
+    where: {
+      constituencyId: service.constituencyId,
+      isHidden: false,
+    },
+    _avg: { rating: true, serviceTimeMinutes: true },
+    _count: { id: true },
+  });
+
+  const similarServicesAgg = await prisma.report.aggregate({
+    where: {
+      isHidden: false,
+      publicServiceId: { not: id },
+      publicService: {
+        type: service.type,
+      },
+    },
+    _avg: { rating: true, serviceTimeMinutes: true },
+    _count: { id: true },
+  });
+
   return NextResponse.json({
     ...service,
     avgRating: agg._avg.rating,
     avgTime: agg._avg.serviceTimeMinutes,
     reportCount: agg._count.id,
+    insightReports,
+    comparisons: {
+      constituency: {
+        avgRating: constituencyAgg._avg.rating,
+        avgTime: constituencyAgg._avg.serviceTimeMinutes,
+        reportCount: constituencyAgg._count.id,
+      },
+      similarServices: {
+        avgRating: similarServicesAgg._avg.rating,
+        avgTime: similarServicesAgg._avg.serviceTimeMinutes,
+        reportCount: similarServicesAgg._count.id,
+      },
+    },
   });
 }
 
