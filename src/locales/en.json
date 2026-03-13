@@ -68,10 +68,82 @@
       "normal": "Normal",
       "quiet": "Quiet"
     },
+    "tabs": {
+      "recentReports": "Recent Reports",
+      "insights": "Insights"
+    },
     "report": "Report",
     "avgWait": "Avg Wait",
     "avgRating": "Avg Rating",
     "reports": "Reports",
+    "recentReports": "Recent Reports",
+    "noReportsYet": "No reports yet. Be the first!",
+    "insights": {
+      "title": "Service insights",
+      "subtitle": "Track how ratings and wait times change over time for this service.",
+      "metric": "Metric",
+      "groupBy": "Group by",
+      "range": "Time range",
+      "metrics": {
+        "all": "All",
+        "rating": "Rating",
+        "wait": "Wait time"
+      },
+      "grouping": {
+        "month": "Month",
+        "year": "Year"
+      },
+      "rangeOptions": {
+        "1w": "1 week",
+        "3m": "3 months",
+        "12m": "12 months",
+        "all": "All time"
+      },
+      "summary": {
+        "trend": "Trend",
+        "selectedReports": "Selected reports",
+        "periods": "Periods covered",
+        "avgReports": "Avg reports / period",
+        "vsConstituency": "Vs constituency average",
+        "vsSimilar": "Vs similar services"
+      },
+      "chart": {
+        "title": "Trend over time",
+        "subtitle": "Use the filters to compare ratings and wait times across periods.",
+        "expand": "View larger",
+        "closeExpanded": "Close full view",
+        "ratingLegend": "Rating",
+        "waitLegend": "Wait time",
+        "reportsLegend": "Reports",
+        "activePeriod": "Active period",
+        "yAxisRating": "Rating",
+        "yAxisWait": "Wait (min)",
+        "noData": "Not enough data to chart yet."
+      },
+      "trend": {
+        "improving": "Improving",
+        "stable": "Stable",
+        "declining": "Declining",
+        "mixed": "Mixed",
+        "insufficient": "Not enough data",
+        "vsPrevious": "vs previous period"
+      },
+      "comparison": {
+        "higher": "higher",
+        "lower": "lower",
+        "faster": "faster",
+        "slower": "slower",
+        "same": "About the same"
+      },
+      "takeaway": {
+        "title": "Takeaway",
+        "noData": "Not enough reports yet to describe a trend.",
+        "fasterThanConstituency": "Faster than the constituency average",
+        "slowerThanConstituency": "Slower than the constituency average",
+        "aboveSimilarRating": "Rated above similar services",
+        "belowSimilarRating": "Rated below similar services"
+      }
+    },
     "type": {
       "hospital": "Hospital",
       "government_office": "Government Office",
