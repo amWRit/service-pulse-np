@@ -84,6 +84,31 @@ export default function HomeInsightsTab({
     { maximumFractionDigits, minimumFractionDigits: maximumFractionDigits === 0 ? 0 : 1 }
   ).format(value);
 
+
+const filteredTotalReports = filteredChartServices.reduce(
+    (sum, service) => sum + (service.reportCount ?? 0),
+    0
+  );
+  const filteredTimeWeight = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgTime == null) return sum;
+    return sum + service.reportCount;
+  }, 0);
+  const filteredTimeTotal = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgTime == null) return sum;
+    return sum + service.avgTime * service.reportCount;
+  }, 0);
+  const filteredRatingWeight = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgRating == null) return sum;
+    return sum + service.reportCount;
+  }, 0);
+  const filteredRatingTotal = filteredChartServices.reduce((sum, service) => {
+    if (!service.reportCount || service.avgRating == null) return sum;
+    return sum + service.avgRating * service.reportCount;
+  }, 0);
+
+  const filteredAvgWait = filteredTimeWeight > 0 ? filteredTimeTotal / filteredTimeWeight : null;
+  const filteredAvgRating = filteredRatingWeight > 0 ? filteredRatingTotal / filteredRatingWeight : null;
+
   const metricCards = [
     {
       key: "constituencies",
@@ -115,7 +140,7 @@ export default function HomeInsightsTab({
     {
       key: "avgWait",
       label: t("home.avgWaitTime"),
-      value: `${avgWait.toFixed(1)} ${t("home.minutes")}`,
+      value: `${filteredAvgWait !== null ? filteredAvgWait.toFixed(1) : "—"} ${t("home.minutes")}`,
       emoji: "⏱️",
       accent: "from-emerald-50 to-lime-50 dark:from-emerald-950/30 dark:to-lime-950/20",
       border: "border-emerald-100 dark:border-emerald-900/50",
@@ -132,29 +157,7 @@ export default function HomeInsightsTab({
     },
   ];
 
-  const filteredTotalReports = filteredChartServices.reduce(
-    (sum, service) => sum + (service.reportCount ?? 0),
-    0
-  );
-  const filteredTimeWeight = filteredChartServices.reduce((sum, service) => {
-    if (!service.reportCount || service.avgTime == null) return sum;
-    return sum + service.reportCount;
-  }, 0);
-  const filteredTimeTotal = filteredChartServices.reduce((sum, service) => {
-    if (!service.reportCount || service.avgTime == null) return sum;
-    return sum + service.avgTime * service.reportCount;
-  }, 0);
-  const filteredRatingWeight = filteredChartServices.reduce((sum, service) => {
-    if (!service.reportCount || service.avgRating == null) return sum;
-    return sum + service.reportCount;
-  }, 0);
-  const filteredRatingTotal = filteredChartServices.reduce((sum, service) => {
-    if (!service.reportCount || service.avgRating == null) return sum;
-    return sum + service.avgRating * service.reportCount;
-  }, 0);
-
-  const filteredAvgWait = filteredTimeWeight > 0 ? filteredTimeTotal / filteredTimeWeight : null;
-  const filteredAvgRating = filteredRatingWeight > 0 ? filteredRatingTotal / filteredRatingWeight : null;
+  
 
   return (
     <div className="space-y-6">
